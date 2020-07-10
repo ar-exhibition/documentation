@@ -24,6 +24,16 @@
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0.2pt}
 
+\author{
+  Schnoor, Vincent\\
+  \texttt{vincent.schnoor@haw-hamburg.de}
+  \and
+  Neudecker, Julius\\
+  \texttt{julius.neudecker@haw-hamburg.de}
+  \and
+  Lückert, Marlon\\
+  \texttt{marlon.lueckert@haw-hamburg.de}
+}
 \title{Projekt 2 - AR Ausstellung}
 %%%%%%%%%%%%%%%%%%%%%%%%%% DOCUMENT STARTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -35,29 +45,29 @@
 
 \section{Vorhaben}
 
-Wir möchten für das Projekt 2 eine Augmented Reality App entwickeln, die es ermöglicht Ausstellungsstücke in einem Raum virtuell zu erleben. Ähnlich wie beim Rundgang Finkenau werden Projekte der Studierenden in einem Raum ausgestellt.
-Für den Zugriff auf die Projekt wird eine Web-Anwendung entwickelt, die es den Studierenden ermöglicht ihre Arbeiten hochzuladen.
+Für das Projekt 2 im Studiengang \textit{Digital Reality} möchten wir eine Augmented Reality App entwickeln, die es ermöglicht Ausstellungsstücke in einem Raum virtuell zu erleben. Ähnlich wie beim Rundgang Finkenau können die Projekte der Studierenden dabei virtuell in einem Raum ausgestellt werden, wo sie von Besuchern betrachtet werden können.
+Für den Zugriff auf die Semester-Projekte wird eine Web-Anwendung, in Form einer Webseite, entwickelt, die es den Studierenden ermöglicht ihre Arbeiten selbstständig hochzuladen.
 \subsection{Augmented Reality App}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[keepaspectratio, width=8cm]{Report/images/3d-gallery.jpg}
-    \caption{Caption}
+    \includegraphics[width=6.36cm, height=5cm]{images/3d-gallery.jpg}
+    \caption{AR Ausstellung - Beispiel}
     \label{fig:my_label}
 \end{figure}
 
-Das zentrale Element der Augmented Reality App ist eine Skulptur, die mittels 3D-Objekterkennung erkannt wird und als Eingang in die virtuelle Welt dient.
+Das zentrale Element der Augmented Reality App ist eine Skulptur, die mit Hilfe von 3D-Objekterkennung erkannt wird und als Eingang in die virtuelle Welt dient.
 Diese App bedient zwei User-Gruppen. Zum einen gibt es die User, die den Raum einrichten. Sie haben innerhalb der App Zugriff auf das Content-Management-System mit allen Assets der Studierenden und können diese frei im Raum platzieren und so die Austellung vorbereiten. Nachdem der Raum eingerichtet wurde, wird die Anordnung der Objekte gespeichert.
 
-Die zweite User-Gruppe besteht aus den Besuchern. Sie nutzen die App, um sich alle Objekte anzuschauen. Der Raum ist für alle Benutzer gleich und ermöglicht so ein Multi-User Erlebnis.
+Die zweite User-Gruppe besteht aus den Besuchern. Sie nutzen die App, um sich alle Objekte anzuschauen. Der Raum sieht für alle Benutzer gleich aus und ermöglicht so ein Multi-User Erlebnis.
 
 Um die Benutzererfahrung zu verbessern, werden die Lichtverhältnisse des Raum mit in die virtuelle Darstellung einberechnet, um eine realitätsnahe Visualisierung zu garantieren.
 
 \subsection{Content-Management-System}
 
-Die AR-App soll Zugriff auf die Asstes der Studierenden bieten. Dazu zählen 3D-Objekte, Bilder, Videos, Audio-Dateien oder auch PDFs. Für eine einfache Verwaltung dieser Dateien muss ein Content-Management-System entwickelt werden.
-Hier kann jeder Studierende seine auszustellenden Werke hochladen. Dazu wird zum einen ein Frontend benötigt für die Eingabe der Informationen und zum anderen ein Backend, welches die Dateien und Daten in einer Datenbank speichert.
-Des Weitern müssen API-Endpunkte erstellt werden, die die Kommunikation zwischen CMS und App herstellen.
+Die AR-App soll Zugriff auf die Assets der Studierenden bieten. Dazu zählen 3D-Objekte, Bilder, Videos, Audio-Dateien oder auch PDFs. Für eine einfache Verwaltung dieser Dateien muss ein Content-Management-System entwickelt werden.
+Hier kann jeder Studierende seine auszustellenden Werke hochladen. Dazu wird zum einen ein Frontend für die Eingabe der Informationen benötigt und zum anderen ein Backend, welches die Dateien und Daten in einer Datenbank speichert.
+Des Weiteren müssen API-Endpunkte erstellt werden, die die Kommunikation zwischen CMS und App herstellen.
 Die korrekte Darstellung von 3D-Objekten muss gesichert werden, dies geschieht über eine Preview des Objekts schon während des Uploads, welches über Drittanbieter-Software (Sketchfab) gelöst wird.
 
 \section{Zeitplan}
@@ -79,5 +89,5 @@ Die Arbeit am Projekt wird wie folgt aufgeteilt:
     \item Vincent: Streamen der Daten aus dem CMS, Frontend-Entwicklung des CMS, Platzierung der 3D-Objekte
 \end{itemize}
 \section{Ressourcen}
-Für die Umsetzung des Projektes benötigen wir Zugang zu drei iPad Pro mit LiDAR-Scannern. Um die Bildern, Videos, Lichtinstallationen und 3D-Objekte zu sichern benötigen wir entsprechenden Webspace. Dieser kann kostengünstig bei Unternehmen wie Firebase von Google erworben werden oder wird von der HAW Hamburg selber gestellt. Die genaue Umsetzung sollte mit den Verantwortlichen diskutiert werden, um die für die HAW Hamburg beste Lösung zu finden.
+Für die Umsetzung des Projektes benötigen wir Zugang zu drei iPad Pro mit LiDAR-Scannern. Um die Bilder, Videos, Audio-Dateien und 3D-Objekte zu sichern benötigen wir entsprechenden Webspace. Dieser kann kostengünstig bei Unternehmen wie Firebase von Google erworben werden oder wird von der HAW Hamburg selber gestellt. Die genaue Umsetzung sollte mit den Verantwortlichen diskutiert werden, um die für die HAW Hamburg beste Lösung zu finden.
 \end{document}
