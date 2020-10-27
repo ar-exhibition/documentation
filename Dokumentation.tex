@@ -90,7 +90,7 @@ Texturen werden als Base Color problemlos unterstützt. Bei Roughness und Metall
 Wurde das Node-Setup nicht angepasst wird versucht beim Export die relevanten Daten auszulesen, was mitunter zu längeren Exportzeiten führen kann.\\
 Baked Ambient Occluion, Normal Maps und Emissive Materials werden problemlos unterstützt und müssen nicht weiter angepasst werden.\\
 
-\textbf{Animationen}\\
+\textbf{Animationen:}\\
 Animationen im GLTF-Format zu exportieren ist nicht kompliziert. Folgende Animationstypen werden nativ beim Export unterstützt:
 \begin{itemize}
 \item Keyframes (Translation, Rotation, Scale)
@@ -116,4 +116,28 @@ Wenn diese Anforderungen eingehalten werden können Blender-Modelle exportiert u
 % Wie können die bei der Analyse gewonnenen Ergebnisse in das Projekt integriert werden? Bzw. wie wurden die Ergebnisse bereits integriert?
 \section{Ausblick}
 % Wie könnte das Projekt in Zukunft erweitert werden?
+% PDF Unterstützung / PDFs in AR
+% AI-basierter Vorschlag ähnlicher Inhalte zum schnellen Platzieren (Quick Placement)
+% Erstellen von Lichtquellen in der AR Szene und Export der Lichtquellen als GLTF
+% Schatten
+% Integration von externen APIs wie Sketchfab oder Google Poly
+% Tutorial bei der erstmaligen Benutzung der App
+% Weitere Informationen über digitale Inhalte via dynamisch erstellter AR-Textfelder
+% Login-Maske um das Platzieren von Inhalten als Kurator zu schützen
+% Szenen direkt in der App neu erstellen und Namen ändern
+% Bilder und Videos automatisch an Wänden platzieren
+% Angepasstes App-UI für Smartphones
+Auch wenn die App bereits in einem funktionierenden Stadium ist, gibt es immer noch Features die in Zukunft ergänzt werden könnten. Die im Folgenden vorgestellten Ideen stellen eine Auswahl an Features da, welche die Nutzbarkeit der App verbessern und für einen breiteren Markt öffnen.\\
+In der App können bereits Bilder, Videos und 3D-Modelle dargestellt werden. Denkbar wäre weiterhin eine Darstellung von PDFs in AR. So könnten bspw. studentische oder wissenschaftliche Arbeiten ebenfalls virtuell ausgestellt werden.\\
+Auch wenn das Platzieren von Modellen bereits gut funktioniert, so ist die Auswahl mehrerer Modelle mühsam. Für jedes Modell muss das UI geöffnet und das gewollte Modell ausgewählt werden. Eine Verbesserung wäre hier eine durch eine AI unterstützte Schnellauswahl, welche dem User basierend auf dem gerade platzierten Modell thematisch ähnliche Modelle, z.B. aus demselben Studiengang, vorschlägt. So könnte der Workflow des Platzierens in der App erleichtert werden.\\
+Und während bei 3D-Modellen die Platzierung mitten im Raum häufig gewollt ist um das Modell von allen Seiten betrachten zu können, sind in der Luft schwebende Bilder und Videos unter Umständen nicht gewollt. Aus diesem Grund sollten zwei-dimensionale Objekte wie Bilder oder Videos automatisch an physikalischen Entitäten wie Wänden platziert werden, sodass der Eindruck entsteht die Medien würden wie in einem Museum an den Wänden hängen.\\
+Auch das Platzieren von Lichtquellen in der Szene ist geplant, um die Lichtverhältnisse in AR den Lichtverhältnissen der Realität besser anzupassen oder Highlights auf bestimmte Inhalte zu setzen. Dazu müssen Lichtquellen in AR über das App-Interface platzierbar gemacht und beim Speichern der Szene in der Datenbank gespeichert werden.\\
+Zusammen mit der Implementierung von virtuellen Lichtquellen läge die Einführung von Schatten, welche die Modelle in AR werfen, nahe. Lichtquellen und Schatten würden die virtuellen Ausstellungen noch lebendiger und realer werden lassen.\\
+Um den Informationsgehalt der virtuellen Ausstellungen zu erhöhen ist die Darstellung der Künstlerdaten, wie Name des Künstlers, Name des Modells, etc. geplant. In einem Text-UI sollen diese, bereits in der Datenbank vorliegenden, Daten dynamisch erstellt und dargestellt werden.\\
+Für die HAW Hamburg ist die Anbindung an eine, von den Studenten der HAW genutzten, Datenbank zwar sinnvoll, für andere interessierte Institutionen wie andere Hochschulen oder Museen allerdings weniger. Aus diesem Grund planen wir die Anbindung der APP an externe APIs wie Sketchfab und Google Poly, wo jeder 3D-Modelle hochladen und nutzbar machen kann. So ist die App nicht mehr nur von unserer selbst entworfenen Datenbank abhängig, sondern kann automatisch auf große Modell-Bibliotheken zugreifen.\\
+Damit von Kuratoren erstellte virtuelle Szenen nicht von Außenstehenden frei verändert werden können ist die Implementierung einer Login-Maske als Kurator in der Diskussion.\\
+Und um die Handhabung der App und das Erstellen von Szenen weiter zu vereinfachen gibt es Pläne neue Szenen direkt in der App erstellen zu können. Zur Zeit können diese ausschließlich über ein Interface auf dem CMS erstellt werden. Um diesen Schritt zu umgehen und nicht mehr von einer zweiten Application abhängig zu sein könnte dieser erste Schritt bereits in der App passieren. Weiterhin sollte der Szenen-Name direkt über die App und nicht nur über das Content-Management-System änderbar sein.\\
+Die letzten beiden Ideen handeln von einem Tutorial für Erstnutzer, welches die Funktionen der App anschaulich beim Ersten Öffnen zeigt und die Erfahrung des Nutzers so verbessert und einem angepassten Interface für Smartphones. Das jetzige Interface der App ist für das neue Ipad Pro mit LidAR-Scanner optimiert und funktioniert bei bspw. dem neuen Iphone 12 Pro nicht optimal. Eine Anpassung des User Interfaces an unterschiedliche Gerätetypen wäre bei einer wachsenden Auswahl an unterstützten Geräten wünschenswert.\\
+
+Wie zu sehen ist, ist das Potenzial der App bei Weitem noch nicht ausgeschöpft und wird auch in Zukunft von uns weiter entwickelt und verbessert werden. Die hier vorgestellten Features stellen unsere Ideen für eine mögliche zukünftige Erweiterung der App dar.
 \end{document}
