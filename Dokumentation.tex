@@ -136,7 +136,7 @@
 
   Wenn diese Anforderungen eingehalten werden können Blender-Modelle exportiert und in unserer App verwendet werden.
 
-  \subsection{Speichern und Wiederherstellen der Einrichtung eines Raumes}
+  \subsubsection{Speichern und Wiederherstellen der Einrichtung eines Raumes}
 
   Eine wichtige Funktion der App ist es, dass man in einem beliebigen Raum Assets platzieren kann und die Position, Rotation und Skalierung der einzelnen Assets speichern kann.
   Weitere User der App können dann die Assets exakt so wiederherstellen, wie sie im Vorhinein gespeichert wurden.
@@ -150,11 +150,11 @@
 
   Für dieses Problem gibt es unterschiedliche Lösungsansätze:
 
-  \subsubsection{GPS}
+  \paragraph{GPS}
   GPS ist eine häufig eingesetzte Technologie für die Positionserkennung. Da es eine globale Standortermittlung ist, sind die Position für alle Nutzer ähnlich.
   Diese Technologie ist aber zu ungenau, vor allem beim Tracking innerhalb von Gebäuden. Auch ist es schwierig Stockwerke zu unterscheiden.
 
-  \subsubsection{Beacons}
+  \paragraph{Beacons}
   In der Indoor Navigation sind Beacons ein gute Möglichkeit einen Standort zu ermitteln. Beacons sind Geräte, die über Bluetooth eine Verbindung zu dem AR Geräte herstellen und so ermitteln können, wo sich ein Gerät befindet.
 
   \begin{figure}[h]
@@ -175,7 +175,7 @@
   Des Weiteren müssen diese Beacons gekauft werden für etwas 5 - 20 Euro pro Stück und in jedem Raum installiert werden, der unsere App nutzen möchte.
   Es darf auch nicht vergessen werden, dass diese Geräte Batterie betrieben sind und somit nach 1-2 Jahren ein Wechel der Batterien durchgeführt werden muss. 
 
-  \subsubsection{Image Markers}
+  \paragraph{Image Markers}
 
   Eine weitere Möglichkeit um die Positionen der echten Welt mit der AR Welt zu synchronisieren sind \textit{Image Marker}. Meist werden Bild Marker dazu genutzt 3D Objekte direkt mit einem Bild zu verankern, wie zum Beispiel bei AR Visitenkarten.
   Es ist aber auch möglich Objekte realtiv zu einem Bild zu platzieren mit einem größerem Abstand. Denn wenn ein Bild mit einem AR SDK wie ARKit oder ARCore erkannt wird, wird die Position und Rotation des Bildes in der AR Session bestimmt.
@@ -198,7 +198,7 @@
 
   Der Nachteil ist, dass mit mehreren Marker gearbeitet werden muss, damit die Qualität dauerhaft gesichert werden kann. Auch muss bei der Positionieren des Markers darauf geachtet werden, dass sich die Position nicht mehr ändert.
 
-  \subsubsection{Visual Positioning System}
+  \paragraph{Visual Positioning System}
 
   Eine weitere Möglichkeit ist es eine Umgebung anhand von Referenzpunkten zu synchronisieren.
   Ein bakanntes Beispiel dieses \textit{Visual Positioning Systems} ist die AR Funktionalität von Google Maps.
@@ -230,7 +230,7 @@
   Der Nachteil ist, dass die Feature Points nicht abgeglichen werden können, wenn sich der Raum ändert, wenn also Gegenstände oder Möbel dem Raum hinzugefügt werden oder entfernt werden.
   Auch kann es bei großen Räumen zu einer großen Datenmenge kommen, wenn viele Feature Points extrahiert werden.
 
-  \subsubsection{Unsere Umsetzung}
+  \paragraph{Unsere Umsetzung}
 
   Bei der Auswahl des Verfahrens mussten wir zwischen \textit{Image Marker} und \textit{Visual Positioning System} abwägen.
   Wir haben uns für das \textit{Visual Positioning System} entschieden, da wir dadurch konstant gutes Tracking versichern können und
