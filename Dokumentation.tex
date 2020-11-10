@@ -217,10 +217,51 @@
 
   Das gleiche Prinzip kann auch auf Räume angewandt werden. Dazu müssen zunächst die Feature Points aus einem Raum extrahiert werden und dann bei der Wiederherstllung verglichen werden.
 
-  Der Vorteil dieses Verfahrens ist es, dass keine extenen Geräte oder Marker benötigt werden. Auch ist die Genauigkeit konstant hoch. Mit moderner Hardware wie LiDAR Sensoren, lässt sich die Performance noch weiter verbessern ohne die Technologie zu ändern.
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{arworldmap-featurepoints}
+    \caption{Feature Points}
+    \label{FeaturePoints}
+  \end{figure}
+
+  In Abbildung \ref{FeaturePoints} ist zusehen wie so eine Wolke von Feature Points im Raum aussehen kann.
+
+  Der Vorteil dieses Verfahrens ist es, dass keine extenen Geräte oder Marker benötigt werden. Auch ist die Genauigkeit konstant hoch, da nicht nur ein Punkt (Image Marker), sonderen mehrer Punkte (Feature Points) gespeichert werden. Mit moderner Hardware wie LiDAR Sensoren, lässt sich die Performance noch weiter verbessern ohne die Technologie zu ändern.
   Der Nachteil ist, dass die Feature Points nicht abgeglichen werden können, wenn sich der Raum ändert, wenn also Gegenstände oder Möbel dem Raum hinzugefügt werden oder entfernt werden.
   Auch kann es bei großen Räumen zu einer großen Datenmenge kommen, wenn viele Feature Points extrahiert werden.
 
+  \subsubsection{Unsere Umsetzung}
+
+  Bei der Auswahl des Verfahrens mussten wir zwischen \textit{Image Marker} und \textit{Visual Positioning System} abwägen.
+  Wir haben uns für das \textit{Visual Positioning System} entschieden, da wir dadurch konstant gutes Tracking versichern können und
+  gleichzeitig durch den Einsatz von LiDAR-Technologie auch sehr schnell Szenen speichern und erkennen können.
+
+  Da wir für die Platform iOS entwickeln, nutzen wir die \textit{ARWorlMap} API \footnote{https://developer.apple.com/documentation/arkit/arworldmap}.
+  Wenn der Kurator Modus der App gestartet wird, werden automatisch Feature Points gesammelt.
+  Wenn der Kurator nun ein Asset im Raum platziert, wird ein sogeannten \textit{ARAnchor} angelegt. Dies ist ein manuell generierter Feature Point.
+  In der Dokumentation heißt es: 
+  \begin{quote}
+    Adding an anchor to the session helps ARKit to optimize world-tracking accuracy in the area around that anchor, so that virtual objects appear to stay in place relative to the real world. If a virtual object moves, remove the corresponding anchor from the old position and add one at the new position.
+  \end{quote}
+  Dies bedeutet, dass wir zusätzlich zu den automatisch erfassten Feature Points auch speziell auf bestimmte Bereiche achten können, die uns interessieren.
+  Wir wollen, dass da wo der Kurator die Assets platziert, besonders genau auf die Position geachtet wird, damit es keine Verschiebungen der Positionen gibt.
+  Durch den Einsatz von \textit{ARAnchor} ist dieses gesichert.
+
+  Nachdem der Kurator die Szene fertig bearbeitet hat, wird eine Binärdatei erstellt, die alle Anchor und Feature Points enthählt.
+  Diese Datei wird auf unseren Server hochgeladen und in der Datenbank hinterlegt.
+
+  Wenn nun ein Besucher die App nutzt, wird diese Binärdatei auf das Gerät geladen.
+  Durch Bewegen im Raum werden Feuture Points erkannt. Wenn genügend Punkte gefunden wurden, können diese mit den Punkten aus der Binärdatei anbgeglichen werden und somit die genaue Position aller Assets wiederhergestellt werden.
+
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{ar-world-map}
+    \caption{ARWorldMap Synchronisierung}
+    \label{ARWorldMap}
+  \end{figure}
+
+  In Abbildung \ref{ARWorldMap} ist zu sehen, wie anhand von Feature Points (gelb) die AR Session synchronisiert wird.
 
   \section{Wissenschaftliche Umsetzung}
   % Inwiefern wurde hier wissenschaftlich gearbeitet? Welche Forschungsfrage/n wurden geklärt und warum sind diese relevant für das Projekt?
