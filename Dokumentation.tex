@@ -160,9 +160,137 @@
   Die letzte Anforderung beim Export von 3D-Modellen mit mehreren Einzelteilen und Animationen ist, dass es nur \textbf{ein} Parent-Objekt geben darf. Dies kann ein leeres Objekt sein, da dies für die Hierarchy in Unity und die Verwendung der Animationen relevant ist.\\
 
   Wenn diese Anforderungen eingehalten werden können Blender-Modelle exportiert und in unserer App verwendet werden.
+
+  \subsubsection{Speichern und Wiederherstellen der Einrichtung eines Raumes}
+
+  Eine wichtige Funktion der App ist es, dass man in einem beliebigen Raum Assets platzieren kann und die Position, Rotation und Skalierung der einzelnen Assets speichern kann.
+  Weitere User der App können dann die Assets exakt so wiederherstellen, wie sie vorab gespeichert wurden.
+
+  Das zu lösende Problem besteht darin, dass beim Starten einer Augmented Reality Session immer ein neues Koordinatensystem angelegt wird.
+  Der Ursprung dieses Koordinatensystems liegt immer bei der Position des AR Gerätes beim Start der App.
+  Wenn nun also verschiedene Nutzer in unterschiedlichen Positionen im Raum starten, führt es dazu, dass die Assets nicht an der selben Position sind wie zuvor beim Speichern.
+  
+  Auf dieses Problem stößt man vor allem, wenn man sich mit dem Thema \textit{Indoor Navigation} beschäftigt. Hier muss die Navigation perfekt auf den realen Raum angepasst werden, damit die Navigation überhaupt funktionieren kann.
+  Unsere App bewegt sich in der gleichen Problemdomäne, da die Assets für jeden Nutzer an der selben Position im realen Raum verankert sein müssen.
+
+  Für dieses Problem gibt es unterschiedliche Lösungsansätze:
+
+  \paragraph{GPS}
+  GPS ist eine häufig eingesetzte Technologie für die Positionserkennung. Da es eine globale Standortermittlung ist, sind die Position für alle Nutzer ähnlich.
+  Diese Technologie ist aber zu ungenau, vor allem beim Tracking innerhalb von Gebäuden. Auch ist es schwierig Stockwerke zu unterscheiden.
+
+  \paragraph{Beacons}
+  In der Indoor Navigation sind Beacons ein gute Möglichkeit einen Standort zu ermitteln. Beacons sind Geräte, die über Bluetooth eine Verbindung zu dem AR Geräte herstellen und so ermitteln können, wo sich ein Gerät befindet.
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{beacons}
+    \caption{Positionsermittlung mit Beacons \cite{beaconNetwork}}
+    \label{Beacons}
+  \end{figure}
+
+  In Abbildung \ref{Beacons} ist zu sehen, dass sich die Beacons (rot) an einer bekannten Position befinden. Die unbekannte Position (grün) wird durch die Abstände zu den einzelnen Beacons errechnet.
+
+  Ein berühmtes Beispiel für den Einsatz von Beacons ist der Flughafen Gatwick in London. Hier wurden 2000 Beacons installiert, um die Indoor Navigation zu ermöglichen. \cite{GatwickA64:online} 
+  Dieses System bietet eine Genauigkeit von +/- 3 Metern.
+  
+  Dies ist zu unganau für unsere Einsatzzwecke, da wir Assets mit der höchsten Genauigkeit platzieren und wiederherstellen möchten. Die Assets müssen sich genau in die Umgebung einbinden lassen.
+  Ein Beispiel wäre die Platzierung eines 3D Objekts auf einem realem Sockel. Wenn die Ungenauigkeit bei mehreren Metern liegt, kann nicht gesichert sein, dass das 3D Objekt immer sich genau auf dem Sockel befindet.
+
+  Des Weiteren müssen diese Beacons gekauft werden für etwas 5 - 20 Euro pro Stück und in jedem Raum installiert werden, der unsere App nutzen möchte.
+  Es darf auch nicht vergessen werden, dass diese Geräte batteriebetrieben sind und somit nach 1-2 Jahren ein Wechsel der Batterien durchgeführt werden muss. 
+
+  \paragraph{Image Markers}
+
+  Eine weitere Möglichkeit um die Positionen der echten Welt mit der AR Welt zu synchronisieren sind \textit{Image Marker}. Meist werden Image Marker dazu genutzt 3D Objekte direkt mit einem Bild zu verankern, wie zum Beispiel bei AR Visitenkarten.
+  Es ist aber auch möglich Objekte relativ zu einem Bild mit einem größerem Abstand zu platzieren. Denn wenn ein Bild mit einem AR SDK wie ARKit oder ARCore erkannt wird, wird die Position und Rotation des Bildes in der AR Session bestimmt.
+  Wenn die Asset Positionen gespeichert werden, muss dies also relativ zu dem Image Marker passieren. Dazu muss immer ein Bild in einem Raum platziert werden und die Position des Bildes darf sich nicht mehr ändern, da sich sonst alle platzierten Assets ändern würden.
+  Die Genauigkeit ist auf Millimeter genau. \cite{HowAugme98:online}
+  
+  Dennoch sinkt die Genauigkeit je weiter man sich von dem Marker entfernt.
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{multi-marker}
+    \caption{Repositionierung mit mehreren Image Markern \cite{HowAugme98:online}}
+    \label{MultiMarker}
+  \end{figure}
+
+  In Abbildung \ref{MultiMarker} ist ein Beispiel einer Indoor Navigation zu sehen, die den Fehlerwert in Meter abhängig von der Distanz zu dem Image Marker zeigt.
+  Hier wird mit mehreren Markern gearbeitet, um die Genauigkeit zu erhöhen.
+
+  Der Vorteil dieses Ansatzes ist, dass die Genauigkeit im Bereich der Image Marker sehr hoch ist und die Marker günstig und einfach produziert werden können und ohne Strom betrieben werden.
+
+  Der Nachteil ist, dass mit mehreren Markern gearbeitet werden muss, damit die Qualität dauerhaft gesichert werden kann. Auch muss bei der Positionierung des Markers darauf geachtet werden, dass sich die Position nicht mehr ändert.
+
+  \paragraph{Visual Positioning System}
+
+  Eine weitere Möglichkeit ist es eine Umgebung anhand von Referenzpunkten zu synchronisieren.
+  Ein bekanntes Beispiel dieses \textit{Visual Positioning Systems} ist die AR Funktionalität von Google Maps.
+  
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{vps-google}
+    \caption{VPS in Google Maps \cite{GoogleMa12:online}}
+    \label{VPSGoogle}
+  \end{figure}
+
+  Bei Google Maps werden die Bilddaten der AR Kamera mit den Daten der Google Streetview Aufnahmen verglichen.
+  Durch die Synchronisierung besonders markanter Stellen in der Umgebung (\textit{Feature Points}) kann die Position und Rotation in der realen Welt sehr genau wiederhergestellt werden.
+
+  In Abbildung \ref{VPSGoogle} ist zu sehen wie anhand von Feature Points die Position der Kamera bestimmt wird.
+
+  Das gleiche Prinzip kann auch auf Räume angewandt werden. Dazu werden zunächst die Feature Points aus einem Raum extrahiert und bei der Wiederherstllung wieder abgeglichen.
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{arworldmap-featurepoints}
+    \caption{Feature Points}
+    \label{FeaturePoints}
+  \end{figure}
+
+  In Abbildung \ref{FeaturePoints} ist zu sehen wie so eine Wolke von Feature Points im Raum aussehen kann.
+
+  Der Vorteil dieses Verfahrens ist es, dass keine extenen Geräte oder Marker benötigt werden. Auch ist die Genauigkeit konstant hoch, da nicht nur ein Punkt (Image Marker), sonderen mehrere Punkte (Feature Points) gespeichert werden. Mit moderner Hardware wie LiDAR Sensoren, lässt sich die Performance noch weiter verbessern ohne die Technologie zu ändern.
+  Der Nachteil ist, dass die Feature Points nicht abgeglichen werden können, wenn sich der Raum ändert, wenn also Gegenstände oder Möbel dem Raum hinzugefügt werden oder entfernt werden.
+  Auch kann es bei großen Räumen zu einer großen Datenmenge kommen, wenn viele Feature Points extrahiert werden.
+
+  \paragraph{Unsere Umsetzung}
+
+  Bei der Auswahl des Verfahrens mussten wir zwischen \textit{Image Marker} und \textit{Visual Positioning System} abwägen.
+  Wir haben uns für das \textit{Visual Positioning System} entschieden, da wir dadurch konstant gutes Tracking garantieren können und
+  gleichzeitig durch den Einsatz von LiDAR-Technologie auch sehr schnell Szenen speichern und erkennen können.
+
+  Da wir für die Platform iOS entwickeln, nutzen wir die \textit{ARWorlMap} API \footnote{https://developer.apple.com/documentation/arkit/arworldmap}.
+  Wenn der Kurator Modus der App gestartet wird, werden automatisch Feature Points gesammelt.
+  Wenn der Kurator nun ein Asset im Raum platziert, wird ein sogeannten \textit{ARAnchor} angelegt. Dies ist ein manuell generierter Feature Point.
+  In der Dokumentation heißt es: 
+  \begin{quote}
+    Adding an anchor to the session helps ARKit to optimize world-tracking accuracy in the area around that anchor, so that virtual objects appear to stay in place relative to the real world. If a virtual object moves, remove the corresponding anchor from the old position and add one at the new position.
+  \end{quote}
+  Dies bedeutet, dass wir zusätzlich zu den automatisch erfassten Feature Points auch speziell auf bestimmte Bereiche achten können, die uns interessieren.
+  Wir wollen, dass da wo der Kurator die Assets platziert, besonders genau auf die Position geachtet wird, damit es keine Verschiebungen der Positionen gibt.
+  Durch den Einsatz von \textit{ARAnchor} ist dieses gesichert.
+
+  Nachdem der Kurator die Szene fertig bearbeitet hat, wird ein Datensatz erstellt, der alle Anchor und Feature Points enthält.
+  Dieser Datensatz wird auf unseren Server hochgeladen und in der Datenbank hinterlegt.
+
+  Wenn nun ein Besucher die App nutzt, werden die Daten auf das entsprechende Gerät geladen.
+  Durch Bewegen im Raum werden Feuture Points erkannt. Wenn genügend Punkte gefunden wurden, können diese mit den Punkten aus dem Datensatz abgeglichen werden und somit die genaue Position aller Assets wiederhergestellt werden.
+
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{ar-world-map}
+    \caption{ARWorldMap Synchronisierung}
+    \label{ARWorldMap}
+  \end{figure}
+
+  In Abbildung \ref{ARWorldMap} ist zu sehen, wie anhand von Feature Points (gelb) die AR Session synchronisiert wird.
+
   \section{Wissenschaftliche Umsetzung}
   % Inwiefern wurde hier wissenschaftlich gearbeitet? Welche Forschungsfrage/n wurden geklärt und warum sind diese relevant für das Projekt?
-  Für die Umsetzung des Projektes wurde die im neuen Ipad Pro erstmalig verbaute Technologie LidAR verwendet welche, wie bereits oben beschrieben, die Erkennung von Oberflächen und somit die Platzierung von Objekten in AR verbessert. Um herauszufinden ob die LidAR-Technologie die Immersionstiefe bei AR-Anwendungen erhöht wurden in einem User Research zehn Studenten der Hochschule Fresenius beobachtet und befragt. Die folgenden Kapitel stellen den Forschungsprozess und die Ergebnisse des User Research dar.
+  Für die Umsetzung des Projektes wurde die im neuen Ipad Pro erstmalig verbaute LidAR-Technologie verwendet, welche, wie bereits oben beschrieben, die Erkennung von Oberflächen und somit die Platzierung von Objekten in AR verbessert. Um herauszufinden ob die LidAR-Technologie die Immersionstiefe bei AR-Anwendungen erhöht wurden in einem User Research zehn Studenten der Hochschule Fresenius beobachtet und befragt. Die folgenden Kapitel stellen den Forschungsprozess und die Ergebnisse des User Research dar.
   \subsection{Hypothese}
   % Welche Forschungsfrage wurde gewählt und warum?
   Die von uns aufgrund der Forschungsfrage aufgestellte Hypothese lautet demnach folgendermaßen:\\
