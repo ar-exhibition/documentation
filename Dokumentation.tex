@@ -139,7 +139,7 @@
   \subsubsection{Speichern und Wiederherstellen der Einrichtung eines Raumes}
 
   Eine wichtige Funktion der App ist es, dass man in einem beliebigen Raum Assets platzieren kann und die Position, Rotation und Skalierung der einzelnen Assets speichern kann.
-  Weitere User der App können dann die Assets exakt so wiederherstellen, wie sie im Vorhinein gespeichert wurden.
+  Weitere User der App können dann die Assets exakt so wiederherstellen, wie sie vorab gespeichert wurden.
 
   Das zu lösende Problem besteht darin, dass beim Starten einer Augmented Reality Session immer ein neues Koordinatensystem angelegt wird.
   Der Ursprung dieses Koordinatensystems liegt immer bei der Position des AR Gerätes beim Start der App.
@@ -177,9 +177,9 @@
 
   \paragraph{Image Markers}
 
-  Eine weitere Möglichkeit um die Positionen der echten Welt mit der AR Welt zu synchronisieren sind \textit{Image Marker}. Meist werden Bild Marker dazu genutzt 3D Objekte direkt mit einem Bild zu verankern, wie zum Beispiel bei AR Visitenkarten.
+  Eine weitere Möglichkeit um die Positionen der echten Welt mit der AR Welt zu synchronisieren sind \textit{Image Marker}. Meist werden Image Marker dazu genutzt 3D Objekte direkt mit einem Bild zu verankern, wie zum Beispiel bei AR Visitenkarten.
   Es ist aber auch möglich Objekte relativ zu einem Bild mit einem größerem Abstand zu platzieren. Denn wenn ein Bild mit einem AR SDK wie ARKit oder ARCore erkannt wird, wird die Position und Rotation des Bildes in der AR Session bestimmt.
-  Wenn die Asset Positionen gespeichert werden, muss dies also relativ zu dem Bild Marker passieren. Dazu muss immer ein Bild in einem Raum platziert werden und die Position des Bildes darf sich nicht mehr ändern, da sich sonst alle platzierten Assets ändern würden.
+  Wenn die Asset Positionen gespeichert werden, muss dies also relativ zu dem Image Marker passieren. Dazu muss immer ein Bild in einem Raum platziert werden und die Position des Bildes darf sich nicht mehr ändern, da sich sonst alle platzierten Assets ändern würden.
   Die Genauigkeit ist auf Millimeter genau. \cite{HowAugme98:online}
   
   Dennoch sinkt die Genauigkeit je weiter man sich von dem Marker entfernt.
@@ -194,7 +194,7 @@
   In Abbildung \ref{MultiMarker} ist ein Beispiel einer Indoor Navigation zu sehen, die den Fehlerwert in Meter abhängig von der Distanz zu dem Image Marker zeigt.
   Hier wird mit mehreren Markern gearbeitet, um die Genauigkeit zu erhöhen.
 
-  Der Vorteil dieses Ansatzes ist, dass die Genauigkeit im Bereich der Image Marker sehr hoch ist und die Marker billig produziert werden können und ohne Strom betrieben werden.
+  Der Vorteil dieses Ansatzes ist, dass die Genauigkeit im Bereich der Image Marker sehr hoch ist und die Marker günstig und einfach produziert werden können und ohne Strom betrieben werden.
 
   Der Nachteil ist, dass mit mehreren Markern gearbeitet werden muss, damit die Qualität dauerhaft gesichert werden kann. Auch muss bei der Positionierung des Markers darauf geachtet werden, dass sich die Position nicht mehr ändert.
 
@@ -211,11 +211,11 @@
   \end{figure}
 
   Bei Google Maps werden die Bilddaten der AR Kamera mit den Daten der Google Streetview Aufnahmen verglichen.
-  Durch die Synchronisierung besonders markanter Stellen in der Umgebung (Feature Points) kann die Position und Rotation in der realen Welt sehr genau wiederhergestellt werden.
+  Durch die Synchronisierung besonders markanter Stellen in der Umgebung (\textit{Feature Points}) kann die Position und Rotation in der realen Welt sehr genau wiederhergestellt werden.
 
   In Abbildung \ref{VPSGoogle} ist zu sehen wie anhand von Feature Points die Position der Kamera bestimmt wird.
 
-  Das gleiche Prinzip kann auch auf Räume angewandt werden. Dazu müssen zunächst die Feature Points aus einem Raum extrahiert werden und dann bei der Wiederherstllung verglichen werden.
+  Das gleiche Prinzip kann auch auf Räume angewandt werden. Dazu werden zunächst die Feature Points aus einem Raum extrahiert und bei der Wiederherstllung wieder abgeglichen.
 
   \begin{figure}[h]
     \centering
@@ -233,7 +233,7 @@
   \paragraph{Unsere Umsetzung}
 
   Bei der Auswahl des Verfahrens mussten wir zwischen \textit{Image Marker} und \textit{Visual Positioning System} abwägen.
-  Wir haben uns für das \textit{Visual Positioning System} entschieden, da wir dadurch konstant gutes Tracking versichern können und
+  Wir haben uns für das \textit{Visual Positioning System} entschieden, da wir dadurch konstant gutes Tracking garantieren können und
   gleichzeitig durch den Einsatz von LiDAR-Technologie auch sehr schnell Szenen speichern und erkennen können.
 
   Da wir für die Platform iOS entwickeln, nutzen wir die \textit{ARWorlMap} API \footnote{https://developer.apple.com/documentation/arkit/arworldmap}.
@@ -247,11 +247,11 @@
   Wir wollen, dass da wo der Kurator die Assets platziert, besonders genau auf die Position geachtet wird, damit es keine Verschiebungen der Positionen gibt.
   Durch den Einsatz von \textit{ARAnchor} ist dieses gesichert.
 
-  Nachdem der Kurator die Szene fertig bearbeitet hat, wird eine Binärdatei erstellt, die alle Anchor und Feature Points enthählt.
-  Diese Datei wird auf unseren Server hochgeladen und in der Datenbank hinterlegt.
+  Nachdem der Kurator die Szene fertig bearbeitet hat, wird ein Datensatz erstellt, der alle Anchor und Feature Points enthält.
+  Dieser Datensatz wird auf unseren Server hochgeladen und in der Datenbank hinterlegt.
 
-  Wenn nun ein Besucher die App nutzt, wird diese Binärdatei auf das Gerät geladen.
-  Durch Bewegen im Raum werden Feuture Points erkannt. Wenn genügend Punkte gefunden wurden, können diese mit den Punkten aus der Binärdatei anbgeglichen werden und somit die genaue Position aller Assets wiederhergestellt werden.
+  Wenn nun ein Besucher die App nutzt, werden die Daten auf das entsprechende Gerät geladen.
+  Durch Bewegen im Raum werden Feuture Points erkannt. Wenn genügend Punkte gefunden wurden, können diese mit den Punkten aus dem Datensatz abgeglichen werden und somit die genaue Position aller Assets wiederhergestellt werden.
 
 
   \begin{figure}[h]
