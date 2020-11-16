@@ -88,105 +88,204 @@
       Die Inhalte können genau wie vom Kurator gewollt platziert werden und erscheinen dem Besucher in der gewollten Position, Rotation und Größe.
 
   \section{Technische Umsetzung}
-    % Wie funktioniert die App, bzw. das CMS? Welche Software/Hardware Einheiten werden verwendet?
-    Das Projekt besteht aus zwei gleich großen Bestandteilen: einem Content-Management-System, 
-    welches für die Bereitstellung des Inhalts der App und als Speichermedium studentischer Projekte dient und der App, 
-    welche die Platzierung virtueller Inhalte in einem Raum in AR ermöglicht.\\
+  % Wie funktioniert die App, bzw. das CMS? Welche Software/Hardware Einheiten werden verwendet?
+  Das Projekt besteht aus zwei gleich großen Bestandteilen: einem Content-Management-System, welches für die Bereitstellung des Inhalts der App und als Speichermedium studentischer Projekte dient 
+  und der App, welche die Platzierung virtueller Inhalte in einem Raum in AR ermöglicht.\\
+  Im Folgenden wird die technische Umsetzung des CMS und der App erläutert. 
+  Dabei wird auf bereits existierende ähnliche Produkte eingegangen und wie unser Projekt sich von diesen abgrenzt. 
+  Verschiedene Ansätze der Umsetzung werden diskutiert und miteinander verglichen und die Schwierigkeiten der Umsetzung werden erläutert.
+  
+  \subsection{Stand der Forschung}
+  % Welche Literatur liegt dem Projekt zugrunde, bzw. welche anderen Produkte/Projekte? Inwiefern grenzt sich unser Projekt von diesen ab?
+  \subsection{Content-Management-System}
+  \subsubsection{Aufbau der Datenbank}
+  \subsection{AR App}
+  \subsubsection{Verwendung von 3D-Modellen}
+  Da die Platzierung von 3D-Modellen ein Hauptbestandteil der App ist, wurde ein großer Fokus auf das Dateiformat der 3D-Modelle gelegt. Die dynamische Verwendung der Modelle in der App sollte möglichst einfach und problemlos sein.\\ 
+  Aus diesem Grund wurden die verschiedenen von Unity unterstützten Dateiformate miteinander verglichen, um die im Dateiformat unterstützten Funktionalitäten und die Qualität der Darstellung in der App zu vergleichen.\\
+  Unity unterstützt nativ die folgenden Dateiformate:
+  \begin{itemize}
+  \item FBX
+  \item DAE (Collada)
+  \item DXF
+  \item OBJ
+  \end{itemize}
+  Da die meisten Studenten Blender als 3D-Modelling Tool ihrer Wahl nutzen wurde ein Vergleich der in Blender möglichen Export-Dateiformate und der in Unity unterstützten Formate gemacht. Blender exportiert 3D-Modelle unter anderem als FBX und OBJ, welche ohne großen Aufwand in Unity importiert werden können.\\
+  Der Nachteil dieser Formate ist, dass die Materialien und Texturen als externe Dateien in einem getrennten Ordner exportiert werden. Für die direkte Verwendung in Unity kein Problem erschwert dies jedoch das Zwischenspeichern in unserem Content-Management-System. Weiterhin werden \glqq Faces\grqq, Flächen eines 3D-Modells, mit mehr als 5 \glqq Vertices\grqq, Eckpunkten, nicht unterstützt und somit in Unity nicht dargestellt. Bei nicht komplett sauber erstellten 3D-Modellen können so unschöne Lücken im Modell entstehen die unerwünscht sind.\\
+  Aus diesem Grund wurde das von der Khronos Group entwickelte und in Blender integrierte GLTF 2.0 Format auf seine Verwendbarkeit in Unity untersucht. GLTF speichert sämtliche Daten eines 3D-Modells, darunter auch Materialien und Animationen, in einer einzigen, auf dem JSON-Dateiformat basierenden Datei ab. Das Dateiformat ist extrem robust und speichert jegliche Geometrie eines 3D-Modells ab. Der Nachteil des GLTF-Formates ist allerdings, dass dieses erst ab der Blender Version 2.81 unterstützt und erst ab 2.83 richtig implementiert ist. Alte Blender Modelle müssen demnach auf eine höhere Blender-Version gebracht und dort exportiert werden. Weiterhin unterstützt Unity, wie in der Auflistung oben zu sehen, das Dateiformat GLTF 2.0 nicht nativ, weshalb zusätzliche Bibliotheken benötigt werden um die Dateien nutzen zu können.\\
+  Eine dieser und die in unserem Projekt verwendete Bibliothek ist die \textit{GLTFUtility} Bibliothek des GitHub-Nutzers \textit{Siccity}. \textit{GLTFUtility} unterstützt den Import und Export von GLTF Dateien in Unity während der Laufzeit, was für unser Projekt von elementarer Bedeutung ist, da die 3D-Modelle beim Starten der App nicht bereits vorliegen, sondern während der Laufzeit der App dynamisch geladen und verwendet werden.\\
 
-    Im Folgenden wird die technische Umsetzung des CMS und der App erläutert. 
-    Dabei wird auf bereits existierende ähnliche Produkte eingegangen und wie unser Projekt sich von diesen abgrenzt. 
-    Verschiedene Ansätze der Umsetzung werden diskutiert und miteinander verglichen und die Schwierigkeiten der Umsetzung werden erläutert.
+  Der Vergleich der drei untersuchten Dateiformate hinsichtlich Qualität zeigte, dass die Darstellung von GLTF-Modellen gegenüber FBX- und OBJ-Modellen besser ist (siehe Abbildungen x, y und z). Die von Blender exportierten Materialien werden im GLTF-Format, durch die bessere Unterstützung diverser Material-Eigenschaften, besser dargestellt.\\
 
-    \subsection{Stand der Forschung}
-    % Welche Literatur liegt dem Projekt zugrunde, bzw. welche anderen Produkte/Projekte? Inwiefern grenzt sich unser Projekt von diesen ab?
+  Aus diesen Gründen, der besseren Darstellung der 3D-Modelle in Unity, die robustere Geometrie-Darstellung und der Export in einer einzigen Datei, entschieden wir uns dazu GLTF als einziges Dateiformat für die Verwendung innerhalb der App zu verwenden.
+  \subsubsection{Export-Anforderungen an 3D-Modelle}
+  Die im Laufe des Projektes erstellten Anforderungen an den Export der 3D-Modelle hinsichtlich ihrer Material-Eigenschaften und Animationen beziehen sich ausschließlich auf den Export in der 3D-Modelling-Software Blender.\\
 
-    \subsection{Content-Management-System}
+  Die in Blender erstellten Materialien weisen mit zunehmender realitätsnähe eine steigende Komplexität auf. Aus diesem Grund mussten bestimmte Anforderungen an den Export von 3D-Modellen aus Blender gestellt werden, um die korrekte Darstellung in der von uns entwickelten App zu gewährleisten. Die folgenden Anforderungen gelten für den Export von 3D-Modellen aus Blender um die Darstellung in unserer App zu gewährleisten.\\
 
-    \subsubsection{Aufbau der Datenbank}
+  \textbf{Meshes:}\\
+  GLTF unterstützt den Export von jeglicher Geometrie des Meshes. Dabei ist die Anzahl der Vertices eines Faces irrelevant, da Quads und N-Gons beim Export automatisch in Triangles umgewandelt werden.\\
+  Kurven und andere \glqq Nicht-Mesh\grqq Daten werden nicht übernommen uns müssen vor dem Export in Meshes umgewandelt werden.\\
 
-    \subsection{AR App}
+  \textbf{Materialien:}\\
+  GLTF unterstützt die folgenden Material-Eigenschaften beim Export:
+  \begin{itemize}
+  \item Base Color
+  \item Metallic
+  \item Roughness
+  \item Baked Ambient Occlusion
+  \item Normal Map
+  \item Emissive
+  \end{itemize}
+  Texturen werden als Base Color problemlos unterstützt. Bei Roughness und Metallic Texture-Maps müssen einige Einstellungen vor dem Export getroffen werden. Bei einer Textur erwartet GLTF die Metallic-Werte kodiert im B-Farbchannel, während die Roughness-Werte im G-Farbchannel kodiert sind. Das Node-Setup in Blender sollte demnach folgendermaßen aussehen:\\
+  %Bild einfügen
+  Wurde das Node-Setup nicht angepasst wird versucht beim Export die relevanten Daten auszulesen, was mitunter zu längeren Exportzeiten führen kann.\\
+  Baked Ambient Occluion, Normal Maps und Emissive Materials werden problemlos unterstützt und müssen nicht weiter angepasst werden.\\
 
-    \subsubsection{Verwendung von 3D-Modellen}
-      Da die Platzierung von 3D-Modellen ein Hauptbestandteil der App ist, wurde ein großer Fokus auf das Dateiformat der 3D-Modelle gelegt. Die dynamische Verwendung der Modelle in der App sollte möglichst einfach und problemlos sein.\\ 
-      Aus diesem Grund wurden die verschiedenen von Unity unterstützten Dateiformate miteinander verglichen, um die im Dateiformat unterstützten Funktionalitäten und die Qualität der Darstellung in der App zu vergleichen.\\
-      Unity unterstützt nativ die folgenden Dateiformate:
-      \begin{itemize}
-      \item FBX
-      \item DAE (Collada)
-      \item DXF
-      \item OBJ
-      \end{itemize}
-      Da die meisten Studenten Blender als 3D-Modelling Tool ihrer Wahl nutzen wurde ein Vergleich der in Blender möglichen Export-Dateiformate und der in Unity unterstützten Formate gemacht. Blender exportiert 3D-Modelle unter anderem als FBX und OBJ, welche ohne großen Aufwand in Unity importiert werden können.\\
-      Der Nachteil dieser Formate ist, dass die Materialien und Texturen als externe Dateien in einem getrennten Ordner exportiert werden. Für die direkte Verwendung in Unity kein Problem erschwert dies jedoch das Zwischenspeichern in unserem Content-Management-System. Weiterhin werden \glqq Faces\grqq, Flächen eines 3D-Modells, mit mehr als 5 \glqq Vertices\grqq, Eckpunkten, nicht unterstützt und somit in Unity nicht dargestellt. Bei nicht komplett sauber erstellten 3D-Modellen können so unschöne Lücken im Modell entstehen die unerwünscht sind.\\
-      Aus diesem Grund wurde das von der Khronos Group entwickelte und in Blender integrierte GLTF 2.0 Format auf seine Verwendbarkeit in Unity untersucht. GLTF speichert sämtliche Daten eines 3D-Modells, darunter auch Materialien und Animationen, in einer einzigen, auf dem JSON-Dateiformat basierenden Datei ab. Das Dateiformat ist extrem robust und speichert jegliche Geometrie eines 3D-Modells ab. Der Nachteil des GLTF-Formates ist allerdings, dass dieses erst ab der Blender Version 2.81 unterstützt und erst ab 2.83 richtig implementiert ist. Alte Blender Modelle müssen demnach auf eine höhere Blender-Version gebracht und dort exportiert werden. Weiterhin unterstützt Unity, wie in der Auflistung oben zu sehen, das Dateiformat GLTF 2.0 nicht nativ, weshalb zusätzliche Bibliotheken benötigt werden um die Dateien nutzen zu können.\\
-      Eine dieser und die in unserem Projekt verwendete Bibliothek ist die \textit{GLTFUtility} Bibliothek des GitHub-Nutzers \textit{Siccity}. \textit{GLTFUtility} unterstützt den Import und Export von GLTF Dateien in Unity während der Laufzeit, was für unser Projekt von elementarer Bedeutung ist, da die 3D-Modelle beim Starten der App nicht bereits vorliegen, sondern während der Laufzeit der App dynamisch geladen und verwendet werden.\\
+  \textbf{Animationen:}\\
+  Animationen im GLTF-Format zu exportieren ist nicht kompliziert. Folgende Animationstypen werden nativ beim Export unterstützt:
+  \begin{itemize}
+  \item Keyframes (Translation, Rotation, Scale)
+  \item Shape Keys
+  \item Armatures/Skinning
+  \end{itemize}
+  Animationen anderer Eigenschaften wie Licht oder Materialien werden ignoriert.\\
+  Wenn das 3D-Modell nur eine Animation hat gibt es bei der Verwendung in Unity keine Probleme. Probleme entstehen wenn das 3D-Modell aus mehreren Einzelteilen besteht die jeweils eigene Animationen haben, da die Animationen in Unity im Legacy Animation-System abgespielt werden müssen, welches nur eine Animation zur Zeit unterstützt. Aus diesem Grund müssen mehrere Animationen einem NLA Track hinzugefügt werden. Dieser dient quasi als Animations-Controller, welcher die einzelnen Animationen zu einer einzigen Animation zusammenfasst und die verschiedenen Objektteile bewegt.\\
+  Objekt-Constraints, wie \glqq Copy Location\grqq können ebenfalls exportiert werden, wenn diese vorher in Keyframes umgewandelt wurden.\\
+  Die letzte Anforderung beim Export von 3D-Modellen mit mehreren Einzelteilen und Animationen ist, dass es nur \textbf{ein} Parent-Objekt geben darf. Dies kann ein leeres Objekt sein, da dies für die Hierarchy in Unity und die Verwendung der Animationen relevant ist.\\
 
-      Der Vergleich der drei untersuchten Dateiformate hinsichtlich Qualität zeigte, dass die Darstellung von GLTF-Modellen gegenüber FBX- und OBJ-Modellen besser ist (siehe Abbildungen x, y und z). Die von Blender exportierten Materialien werden im GLTF-Format, durch die bessere Unterstützung diverser Material-Eigenschaften, besser dargestellt.\\
+  Wenn diese Anforderungen eingehalten werden können Blender-Modelle exportiert und in unserer App verwendet werden.
 
-      Aus diesen Gründen, der besseren Darstellung der 3D-Modelle in Unity, die robustere Geometrie-Darstellung und der Export in einer einzigen Datei, entschieden wir uns dazu GLTF als einziges Dateiformat für die Verwendung innerhalb der App zu verwenden.
-      
-    \subsubsection{Export-Anforderungen an 3D-Modelle}
-      Die im Laufe des Projektes erstellten Anforderungen an den Export der 3D-Modelle hinsichtlich ihrer Material-Eigenschaften 
-      und Animationen beziehen sich ausschließlich auf den Export in der 3D-Modelling-Software Blender.\\
+  \subsubsection{Speichern und Wiederherstellen der Einrichtung eines Raumes}
 
-      Die in Blender erstellten Materialien weisen mit zunehmender realitätsnähe eine steigende Komplexität auf. 
-      Aus diesem Grund mussten bestimmte Anforderungen an den Export von 3D-Modellen aus Blender gestellt werden, 
-      um die korrekte Darstellung in der von uns entwickelten App zu gewährleisten. 
-      Die folgenden Anforderungen gelten für den Export von 3D-Modellen aus Blender um die Darstellung in unserer App zu gewährleisten.\\
+  Eine wichtige Funktion der App ist es, dass man in einem beliebigen Raum Assets platzieren kann und die Position, Rotation und Skalierung der einzelnen Assets speichern kann.
+  Weitere User der App können dann die Assets exakt so wiederherstellen, wie sie vorab gespeichert wurden.
 
-      \textbf{Meshes:}\\
-      GLTF unterstützt den Export von jeglicher Geometrie des Meshes. 
-      Dabei ist die Anzahl der Vertices eines Faces irrelevant, da Quads und N-Gons beim Export automatisch in Triangles umgewandelt werden.\\
-      Kurven und andere \glqq Nicht-Mesh\grqq Daten werden nicht übernommen uns müssen vor dem Export in Meshes umgewandelt werden.\\
+  Das zu lösende Problem besteht darin, dass beim Starten einer Augmented Reality Session immer ein neues Koordinatensystem angelegt wird.
+  Der Ursprung dieses Koordinatensystems liegt immer bei der Position des AR Gerätes beim Start der App.
+  Wenn nun also verschiedene Nutzer in unterschiedlichen Positionen im Raum starten, führt es dazu, dass die Assets nicht an der selben Position sind wie zuvor beim Speichern.
+  
+  Auf dieses Problem stößt man vor allem, wenn man sich mit dem Thema \textit{Indoor Navigation} beschäftigt. Hier muss die Navigation perfekt auf den realen Raum angepasst werden, damit die Navigation überhaupt funktionieren kann.
+  Unsere App bewegt sich in der gleichen Problemdomäne, da die Assets für jeden Nutzer an der selben Position im realen Raum verankert sein müssen.
 
-      \textbf{Materialien:}\\
-      GLTF unterstützt die folgenden Material-Eigenschaften beim Export:
-      \begin{itemize}
-      \item Base Color
-      \item Metallic
-      \item Roughness
-      \item Baked Ambient Occlusion
-      \item Normal Map
-      \item Emissive
-      \end{itemize}
+  Für dieses Problem gibt es unterschiedliche Lösungsansätze:
 
-      Texturen werden als Base Color problemlos unterstützt. 
-      Bei Roughness und Metallic Texture-Maps müssen einige Einstellungen vor dem Export getroffen werden. 
-      Bei einer Textur erwartet GLTF die Metallic-Werte kodiert im B-Farbchannel, 
-      während die Roughness-Werte im G-Farbchannel kodiert sind. Das Node-Setup in Blender sollte demnach folgendermaßen aussehen:\\
+  \paragraph{GPS}
+  GPS ist eine häufig eingesetzte Technologie für die Positionserkennung. Da es eine globale Standortermittlung ist, sind die Position für alle Nutzer ähnlich.
+  Diese Technologie ist aber zu ungenau, vor allem beim Tracking innerhalb von Gebäuden. Auch ist es schwierig Stockwerke zu unterscheiden.
 
-      %Bild einfügen
-      Wurde das Node-Setup nicht angepasst wird versucht beim Export die relevanten Daten auszulesen, was mitunter zu längeren Exportzeiten führen kann.\\
-      Baked Ambient Occluion, Normal Maps und Emissive Materials werden problemlos unterstützt und müssen nicht weiter angepasst werden.\\
+  \paragraph{Beacons}
+  In der Indoor Navigation sind Beacons ein gute Möglichkeit einen Standort zu ermitteln. Beacons sind Geräte, die über Bluetooth eine Verbindung zu dem AR Geräte herstellen und so ermitteln können, wo sich ein Gerät befindet.
 
-      \textbf{Animationen:}\\
-      Animationen im GLTF-Format zu exportieren ist nicht kompliziert. Folgende Animationstypen werden nativ beim Export unterstützt:
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{beacons}
+    \caption{Positionsermittlung mit Beacons \cite{beaconNetwork}}
+    \label{Beacons}
+  \end{figure}
 
-      \begin{itemize}
-      \item Keyframes (Translation, Rotation, Scale)
-      \item Shape Keys
-      \item Armatures/Skinning
-      \end{itemize}
+  In Abbildung \ref{Beacons} ist zu sehen, dass sich die Beacons (rot) an einer bekannten Position befinden. Die unbekannte Position (grün) wird durch die Abstände zu den einzelnen Beacons errechnet.
 
-      Animationen anderer Eigenschaften wie Licht oder Materialien werden ignoriert.\\
-      Wenn das 3D-Modell nur eine Animation hat gibt es bei der Verwendung in Unity keine Probleme. 
-      Probleme entstehen wenn das 3D-Modell aus mehreren Einzelteilen besteht die jeweils eigene Animationen haben, 
-      da die Animationen in Unity im Legacy Animation-System abgespielt werden müssen, welches nur eine Animation zur Zeit unterstützt. 
-      Aus diesem Grund müssen mehrere Animationen einem NLA Track hinzugefügt werden. Dieser dient quasi als Animations-Controller, 
-      welcher die einzelnen Animationen zu einer einzigen Animation zusammenfasst und die verschiedenen Objektteile bewegt.\\
-      Objekt-Constraints, wie \glqq Copy Location\grqq können ebenfalls exportiert werden, wenn diese vorher in Keyframes umgewandelt wurden.\\
-      Die letzte Anforderung beim Export von 3D-Modellen mit mehreren Einzelteilen und Animationen ist, dass es nur \textbf{ein} Parent-Objekt geben darf. 
-      Dies kann ein leeres Objekt sein, da dies für die Hierarchy in Unity und die Verwendung der Animationen relevant ist.\\
+  Ein berühmtes Beispiel für den Einsatz von Beacons ist der Flughafen Gatwick in London. Hier wurden 2000 Beacons installiert, um die Indoor Navigation zu ermöglichen. \cite{GatwickA64:online} 
+  Dieses System bietet eine Genauigkeit von +/- 3 Metern.
+  
+  Dies ist zu unganau für unsere Einsatzzwecke, da wir Assets mit der höchsten Genauigkeit platzieren und wiederherstellen möchten. Die Assets müssen sich genau in die Umgebung einbinden lassen.
+  Ein Beispiel wäre die Platzierung eines 3D Objekts auf einem realem Sockel. Wenn die Ungenauigkeit bei mehreren Metern liegt, kann nicht gesichert sein, dass das 3D Objekt immer sich genau auf dem Sockel befindet.
 
-      Wenn diese Anforderungen eingehalten werden können Blender-Modelle exportiert und in unserer App verwendet werden.
+  Des Weiteren müssen diese Beacons gekauft werden für etwas 5 - 20 Euro pro Stück und in jedem Raum installiert werden, der unsere App nutzen möchte.
+  Es darf auch nicht vergessen werden, dass diese Geräte batteriebetrieben sind und somit nach 1-2 Jahren ein Wechsel der Batterien durchgeführt werden muss. 
+
+  \paragraph{Image Markers}
+
+  Eine weitere Möglichkeit um die Positionen der echten Welt mit der AR Welt zu synchronisieren sind \textit{Image Marker}. Meist werden Image Marker dazu genutzt 3D Objekte direkt mit einem Bild zu verankern, wie zum Beispiel bei AR Visitenkarten.
+  Es ist aber auch möglich Objekte relativ zu einem Bild mit einem größerem Abstand zu platzieren. Denn wenn ein Bild mit einem AR SDK wie ARKit oder ARCore erkannt wird, wird die Position und Rotation des Bildes in der AR Session bestimmt.
+  Wenn die Asset Positionen gespeichert werden, muss dies also relativ zu dem Image Marker passieren. Dazu muss immer ein Bild in einem Raum platziert werden und die Position des Bildes darf sich nicht mehr ändern, da sich sonst alle platzierten Assets ändern würden.
+  Die Genauigkeit ist auf Millimeter genau. \cite{HowAugme98:online}
+  
+  Dennoch sinkt die Genauigkeit je weiter man sich von dem Marker entfernt.
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{multi-marker}
+    \caption{Repositionierung mit mehreren Image Markern \cite{HowAugme98:online}}
+    \label{MultiMarker}
+  \end{figure}
+
+  In Abbildung \ref{MultiMarker} ist ein Beispiel einer Indoor Navigation zu sehen, die den Fehlerwert in Meter abhängig von der Distanz zu dem Image Marker zeigt.
+  Hier wird mit mehreren Markern gearbeitet, um die Genauigkeit zu erhöhen.
+
+  Der Vorteil dieses Ansatzes ist, dass die Genauigkeit im Bereich der Image Marker sehr hoch ist und die Marker günstig und einfach produziert werden können und ohne Strom betrieben werden.
+
+  Der Nachteil ist, dass mit mehreren Markern gearbeitet werden muss, damit die Qualität dauerhaft gesichert werden kann. Auch muss bei der Positionierung des Markers darauf geachtet werden, dass sich die Position nicht mehr ändert.
+
+  \paragraph{Visual Positioning System}
+
+  Eine weitere Möglichkeit ist es eine Umgebung anhand von Referenzpunkten zu synchronisieren.
+  Ein bekanntes Beispiel dieses \textit{Visual Positioning Systems} ist die AR Funktionalität von Google Maps.
+  
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{vps-google}
+    \caption{VPS in Google Maps \cite{GoogleMa12:online}}
+    \label{VPSGoogle}
+  \end{figure}
+
+  Bei Google Maps werden die Bilddaten der AR Kamera mit den Daten der Google Streetview Aufnahmen verglichen.
+  Durch die Synchronisierung besonders markanter Stellen in der Umgebung (\textit{Feature Points}) kann die Position und Rotation in der realen Welt sehr genau wiederhergestellt werden.
+
+  In Abbildung \ref{VPSGoogle} ist zu sehen wie anhand von Feature Points die Position der Kamera bestimmt wird.
+
+  Das gleiche Prinzip kann auch auf Räume angewandt werden. Dazu werden zunächst die Feature Points aus einem Raum extrahiert und bei der Wiederherstllung wieder abgeglichen.
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{arworldmap-featurepoints}
+    \caption{Feature Points}
+    \label{FeaturePoints}
+  \end{figure}
+
+  In Abbildung \ref{FeaturePoints} ist zu sehen wie so eine Wolke von Feature Points im Raum aussehen kann.
+
+  Der Vorteil dieses Verfahrens ist es, dass keine extenen Geräte oder Marker benötigt werden. Auch ist die Genauigkeit konstant hoch, da nicht nur ein Punkt (Image Marker), sonderen mehrere Punkte (Feature Points) gespeichert werden. Mit moderner Hardware wie LiDAR Sensoren, lässt sich die Performance noch weiter verbessern ohne die Technologie zu ändern.
+  Der Nachteil ist, dass die Feature Points nicht abgeglichen werden können, wenn sich der Raum ändert, wenn also Gegenstände oder Möbel dem Raum hinzugefügt werden oder entfernt werden.
+  Auch kann es bei großen Räumen zu einer großen Datenmenge kommen, wenn viele Feature Points extrahiert werden.
+
+  \paragraph{Unsere Umsetzung}
+
+  Bei der Auswahl des Verfahrens mussten wir zwischen \textit{Image Marker} und \textit{Visual Positioning System} abwägen.
+  Wir haben uns für das \textit{Visual Positioning System} entschieden, da wir dadurch konstant gutes Tracking garantieren können und
+  gleichzeitig durch den Einsatz von LiDAR-Technologie auch sehr schnell Szenen speichern und erkennen können.
+
+  Da wir für die Platform iOS entwickeln, nutzen wir die \textit{ARWorlMap} API \footnote{https://developer.apple.com/documentation/arkit/arworldmap}.
+  Wenn der Kurator Modus der App gestartet wird, werden automatisch Feature Points gesammelt.
+  Wenn der Kurator nun ein Asset im Raum platziert, wird ein sogeannten \textit{ARAnchor} angelegt. Dies ist ein manuell generierter Feature Point.
+  In der Dokumentation heißt es: 
+  \begin{quote}
+    Adding an anchor to the session helps ARKit to optimize world-tracking accuracy in the area around that anchor, so that virtual objects appear to stay in place relative to the real world. If a virtual object moves, remove the corresponding anchor from the old position and add one at the new position.
+  \end{quote}
+  Dies bedeutet, dass wir zusätzlich zu den automatisch erfassten Feature Points auch speziell auf bestimmte Bereiche achten können, die uns interessieren.
+  Wir wollen, dass da wo der Kurator die Assets platziert, besonders genau auf die Position geachtet wird, damit es keine Verschiebungen der Positionen gibt.
+  Durch den Einsatz von \textit{ARAnchor} ist dieses gesichert.
+
+  Nachdem der Kurator die Szene fertig bearbeitet hat, wird ein Datensatz erstellt, der alle Anchor und Feature Points enthält.
+  Dieser Datensatz wird auf unseren Server hochgeladen und in der Datenbank hinterlegt.
+
+  Wenn nun ein Besucher die App nutzt, werden die Daten auf das entsprechende Gerät geladen.
+  Durch Bewegen im Raum werden Feuture Points erkannt. Wenn genügend Punkte gefunden wurden, können diese mit den Punkten aus dem Datensatz abgeglichen werden und somit die genaue Position aller Assets wiederhergestellt werden.
+
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{ar-world-map}
+    \caption{ARWorldMap Synchronisierung}
+    \label{ARWorldMap}
+  \end{figure}
+
+  In Abbildung \ref{ARWorldMap} ist zu sehen, wie anhand von Feature Points (gelb) die AR Session synchronisiert wird.
 
   \section{Wissenschaftliche Umsetzung}
-    % Inwiefern wurde hier wissenschaftlich gearbeitet? Welche Forschungsfrage/n wurden geklärt und warum sind diese relevant für das Projekt?
-    Für die Umsetzung des Projektes wurde die im neuen Ipad Pro erstmalig verbaute Technologie LiDAR verwendet welche, 
-    wie bereits oben beschrieben, die Erkennung von Oberflächen und somit die Platzierung von Objekten in AR verbessert. 
-    Um herauszufinden ob die LiDAR-Technologie die Immersionstiefe bei AR-Anwendungen erhöht wurden in einem User Research zehn Studenten der Hochschule Fresenius beobachtet und befragt. 
-    Die folgenden Kapitel stellen den Forschungsprozess und die Ergebnisse des User Research dar.
-
+  % Inwiefern wurde hier wissenschaftlich gearbeitet? Welche Forschungsfrage/n wurden geklärt und warum sind diese relevant für das Projekt?
+  Für die Umsetzung des Projektes wurde die im neuen Ipad Pro erstmalig verbaute LidAR-Technologie verwendet, welche, wie bereits oben beschrieben, die Erkennung von Oberflächen und somit die Platzierung von Objekten in AR verbessert. Um herauszufinden ob die LidAR-Technologie die Immersionstiefe bei AR-Anwendungen erhöht wurden in einem User Research zehn Studenten der Hochschule Fresenius beobachtet und befragt. Die folgenden Kapitel stellen den Forschungsprozess und die Ergebnisse des User Research dar.
   \subsection{Hypothese}
     % Welche Forschungsfrage wurde gewählt und warum?
     Die von uns aufgrund der Forschungsfrage aufgestellte Hypothese lautet demnach folgendermaßen:\\
