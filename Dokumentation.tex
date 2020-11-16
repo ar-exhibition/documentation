@@ -63,7 +63,12 @@
   Diese Ausstellungen können bspw. von Hochschulen und anderen Bildungsinstituten genutzt werden um Projekte der Studierenden und Schüler auszustellen.
   \subsection{Projektziel}
   % Was soll erreicht werden?
-  Ziel des Projektes ist es, die Darstellung medialer Inhalte der Hochschule und anderer Lehrinstitute einfacher zu gestalten und eine Oberfläche für die Studenten der HAW zu schaffen um ihre im Semester erstellten 3D-Modelle, Bilder und Videos an einem zentralen Ort zu speichern und mit anderen Studierenden zu teilen.
+  Das erste Ziel des Projektes ist es, eine Plattform für die Studierenden der HAW zu schaffen, um ihre im Semester erstellten 3D-Modelle, Bilder und Videos an einem zentralen Ort zu speichern und mit anderen Studierenden zu teilen.
+
+  Das zweite Ziel des Projektes ist es eine Augmented Reality App zu entwickeln, welche es ermöglicht besagte mediale Inhalte in einem Raum zu platzieren und jederzeit dort wieder abrufbar zu machen.
+  Dabei soll die Position der Inhalte für jeden Nutzer exakt die gleiche sein, wodurch die soziale Interaktion zwischen Usern angetrieben werden soll.
+  Die AR App soll ohne einen großen organisatorischen Aufwand für alle Nutzergruppen zu bedienen sein, das heißt, dass das Tracking möglichst ohne externe Maker und Aufbauten auskommen muss.
+
   \subsection{Zielgruppen}
   % Welche Zielgruppen werden mit dem Produkt angesprochen und warum?
   Für unser aus zwei Teilen bestehendes Projekt gibt es zwei Zielgruppen.\\
@@ -75,6 +80,26 @@
   % Wie funktioniert die App, bzw. das CMS? Welche Software/Hardware Einheiten werden verwendet?
   Das Projekt besteht aus zwei gleich großen Bestandteilen: einem Content-Management-System, welches für die Bereitstellung des Inhalts der App und als Speichermedium studentischer Projekte dient und der App, welche die Platzierung virtueller Inhalte in einem Raum in AR ermöglicht.\\
   Im Folgenden wird die technische Umsetzung des CMS und der App erläutert. Dabei wird auf bereits existierende ähnliche Produkte eingegangen und wie unser Projekt sich von diesen abgrenzt. Verschiedene Ansätze der Umsetzung werden diskutiert und miteinander verglichen und die Schwierigkeiten der Umsetzung werden erläutert.
+  
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{project-structure}
+    \caption{Projekt Struktur}
+    \label{ProjektStruktur}
+  \end{figure}
+
+  In Abbildung \ref{ProjektStruktur} ist der Zusammenhang zwischen den Projektteilen skizziert.
+  Auf der einen Seite ist das Content-Management-System zu finden, welches über eine Weboberfläche das Hochladen von Assets ermöglicht.
+  Die hochgeladenen Dateien werden auf dem File Server gespeichert und es werden Datenbankeinträge für die Asset Informationen angelegt.
+  Die AR App konsumiert die Assets des File Servers, welche vom Kurator platziert werden. Die Einrichtung des Kurators wird persistent in der Datenbank gespeichert. 
+  
+  Durch das Entkoppeln von Daten und Anwendunglogik ist es möglich die Downloadgröße der App auf ein Minimum zu reduzieren.
+  Außerdem können die Daten der App zu jedem Zeitpunkt erweitert oder ausgetauscht werden ohne eine neue Version der App zu veröffentlichen. 
+
+  Diese Struktur ermöglicht es auch weitere Services einzubinden, die entweder die Assets der Datenbank nutzen oder Assets für die App bereitstellen.
+  Die VR-Applikation \textit{XRchitecture} ist ein Beispiel für eine Anwendung, die die hochgeladenen Assets einbinden könnte.
+  Als weiterer Asset Lieferant könnten beispielsweise Plattformen wie \textit{Sketchfab} eingesetzt werden. 
+
   \subsection{Stand der Forschung}
   % Welche Literatur liegt dem Projekt zugrunde, bzw. welche anderen Produkte/Projekte? Inwiefern grenzt sich unser Projekt von diesen ab?
   \subsection{Content-Management-System}
