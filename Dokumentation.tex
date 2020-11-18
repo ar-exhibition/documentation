@@ -452,13 +452,29 @@
         Für die Verwaltung der Aufgaben haben wir \textit{Trello} genutzt.
         Dieses Tool folgt dem Kanban-Prinzip und ermöglicht es Arbeitspakete durch verschiedene Prozessstufen (Spalten) laufen zu lassen.
         Wir haben mit 4 Spalten gearbeitet. Als erstes haben wir die \textit{Backlog} Spalte, wo alle Ideen und Aufgaben gesammelt werden.
-        Bei Besprechungen wird festgelegt, welche Aufgaben als nächstes bearbeitet werden soll. Diese Aufgabenpakete werden in die Prozessstufe \textit{Todo} verschoben.
+        Bei Besprechungen wird festgelegt, welche Aufgaben als nächstes bearbeitet werden sollen. Diese Aufgabenpakete werden in die Prozessstufe \textit{Todo} verschoben.
         Dort wird die Aufgabe einem Teammitglied zugeordnet, der diese Aufgabe als nächstes bearbeiten kann.
         Wenn das Teammitglied mit dieser Aufgabe beginnt wird sie in \textit{Doing} verschoben.
         Nach Abschluss der Aufgabe wird sie in \textit{Done} abgelegt.
         So hat man einen Überblick über den Status aller Aufgaben und weiß genau, wer gerade an welche Aufgabe arbeitet.
       
       \paragraph{Versionsverwaltung}
+        Da alle Teammitglieder gleichzeit an dem Code arbeiten, muss es eine verlässliche Versionsverwaltung geben.
+        Wir haben dafür \textit{git} genutzt. Unsere drei Arbeitsfelder \textit{CMS}, \textit{App} und \textit{Dokumentation} haben jeweils ihr eigenes Repository.
+        Damit dieses Repositories zwischen den Teammitgliedern synchronisiert werden können, haben wir sie auf \textit{GitHub} gehostet.
+        Dort sind unsere Repositories unter der Organisation \textit{AR Exhibition} zusammengefasst.
+
+        Um gleichzeitig an bestimmten Features zu arbeiten, gibt es verschiedene \textit{Branches}, die einen unterschiedlichen Entwicklungsstand haben.
+        In der \textit{master} Branch findet man den aktuellen veröffentlichten Stand, dieser Entwicklungszustand spiegelt das CMS unter \url{https://cms.hotpot.codes}
+        und die aktuelle Testflight\footnote{Ein Programm für iOS-Geräte, das es ermöglicht Beta-Versionen von Apps zu laden.} Version der App wider.
+        Des Weiteren gibt es die \text{development} Branch, die den aktuellen unveröffentlichten Entwickungsstand abbildet.
+        In regelmäßigen abständen wird der \textit{development} Stand in die \textit{master} Branch eingepflegt und veröffentlicht.
+
+        Wenn nun neue Funktionen entwickelt werden, wird eine neue Feature-Branch erstellt, diese leitet sich von \textit{development} ab.
+        Nachdem die Funktionen entwicklet wurde, wird ein \textit{Pull Request} in GitHub auf die \textit{development} Branch angefragt.
+        Nun muss mindestens ein weiteres Teammitglied diesen \textit{Pull Request} überprüfen (Review), bevor ein \textit{merge} sattfinden kann.
+        Durch diese gegenseitige Kontrolle bleibt jeder mit dem Code vertraut und es können Fehler frühzeitig erkannt werden.
+        Dies führt zu einer konstant guten Code Qualität und verhindert Regression.
 
 
       \section{Ausblick}
