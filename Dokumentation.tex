@@ -268,7 +268,8 @@
           \item Hintergrundprozess zur Konvertierung in USDZ-Dateien
         \end{itemize}
 
-        Herauszuheben sind dabei die beiden Komponenten \textit{Content API} und \textit{Dateiverwaltung}. Eine ausführlichere Erläuterung der Datenbankinterkation folgt im nächsten Kapitel,
+        Herauszuheben sind dabei die beiden Komponenten \textit{Content API} und \textit{Dateiverwaltung} und \textbf{USDZ Konverter hier?}. 
+        Eine ausführlichere Erläuterung der Datenbankinterkation folgt im nächsten Kapitel,
 
         \paragraph{Content API} ist unsere Schnittstelle zur Client App. Dafür wird mittels eines einfachen Aufrufs über eine definierte URL\footnote{https://cms.hotpot.codes/api/content}
         im CMS ein JSON-String erzeugt, der alle notwendigen Informationen und Links zum runterladen der einzelnen Modelle liefert. Ein kleiner Ausschnit sieht z.B. so aus:
@@ -315,13 +316,83 @@
             ...
         \end{lstlisting}    
         
-        Dieser JSON-String wird auf Anfrage generiert. Die Links zum Runterladen 
+        Dieser JSON-String wird auf Anfrage generiert. Die Links zum Runterladen zeigen auf die Dateien im Dateisystem und können direkt von dort heruntergeladen werden.
+
+        Ferner können durch spezielle Abfragen aus der Client APP heraus bestimmte Objekte die Szenen oder Anchor gelöscht werden. 
+        Für jede Aufgabe gibt es einen definierten API-Endpoint\footnote{Der Endpoint ist eine definierte URL, über die eine gewünschte Funktionalität erreichbar ist}.
+
+        \paragraph{Dateiverwaltung} ist wichtig für das CMS, weil dadurch die Inhalte vom Host - dem eigentlichen Stück Hardware auf dem das CMS läuft - bereitgestellt werden.
+        Durch die Verwendung von Docker\footnote{Eine Virtualisierungsumgebung zur Erzeugung von leichtgewichtigen Microservices auf dem Host} sind wir Hardwareagnostisch.
+        Das heisst, dass Docker hinter den Kulissen mit dem Dateisystem auf dem Host interagiert. Das von ASP.Net Core bereitgestellte Interface funktioniert unabhängig
+        vom Host System immer auf die gleiche Weise. Dadurch lässt sich fehlerfreies und konsistentes Verhalten erreichen.
+
+        Besonderes Augenmerk muss bei der Speicherung und Verwaltung der Inhalte auf Dateinamen gelegt werden. Dadurch werden Konflikte bei Dateinamen vermieden und es kann
+        davon ausgegangen werden, dass jeder Dateiname einmalig ist. Das lässt sich zwar auch erreichen, in dem man jeder Datei einen Zeitstempel und beliebiges Präfix zuweist.
+        Effizienter und einfacher verständlich ist es mithilfe des Dateinamens und einem Zeitstempel eine UUID zu generieren, unter der die Datei gespeichert wird.
+        Das hat ferner den Vorteil, dass die Dateien auf dem Dateisystem anonymisiert werden. Diese UUID wird schließlich in der JSON-Api als \textit{AssetFilename} ausgegeben.       
 
       \subsubsection{Aufbau der Datenbank}
 
-        \paragraph{mySQL vs. MongoDB}
+        Unser CMS benötigt eine Datenbank, die im Hintergrund einen persistenten Datenspeicher bereit stellt.
+        Das hat gegenüber einer Speicherung in einer Textdatei oder zur Laufzeit in Datenstrukturen wie Linked Lists oder Arrays mehrere Vorteile:
 
-        Probleme: u.a. Class-Table inheritance, 
+        \begin{itemize}
+          \item Der Datenspeicher ist eine autonome Einheit
+          \item Nach Beenden des Serverprogramms bleiben die Daten erhalten
+          \item Eingaben und Abfragen können einfacher abstrahiert werden
+        \end{itemize}
+
+        Wir haben uns für unser CMS für eine sog. noSQL Datenbank von MongoDB entschieden. Dabei werden Daten als \textit{Dokumente} gespeichert. 
+        In MongoDB werden Datensätze als Dokumente bezeichnet. Diese kann man anschaulich mit einem JSON-String gleichsetzen, die in sog. \textit{Collections},
+        also Sammlungen von Dokumenten gespeichert werden. Dabei müssen nicht alle Dokumente zwangsläufig eine identische Struktur haben.
+        Der Vorteil dieser Dokumentenbasierten Speicherung ist, dass sich einzelne Dokumente durchaus unterscheiden können, sofern sie über gemeinsame Pararmeter abgefragt werden können.
+
+        [Graphic about MongoDB schema]
+
+        Der große Vorteil des MVC-Patterns ist die starke typisierung der Modelle, was eine Interaktion mit einer MongoDB stark vereinfacht.
+        Die Anwendung kann bei der Verwendung eines vordefinierten Datenmodells immer darauf vertrauen, dass die Datenbank immer die geforderten Daten zurück liefert 
+        und muss nichts parsen bzw. sanity checks der abgefragten Daten vornehmen.
+
+        [Database Schema]
+        
+        Anders als unser CMS, was wir komplett selbst programmiert haben, wird das Datenbankbackend einfach mittels eines sog. \textit{Service-Providers} eingebunden
+        und steht dann mittels Dependency-Injection dem entsprechenden Controller zur Verfügung. Dieser Service-Provider wird zum Start der Serveranwendung einmalig 
+        konfiguriert und steht dann als Singleton\footnote{Einzige Instanz einer Klasse, die global erreichbar ist} zur Verfügung. Die Datenbank selbst ist ein Docker-Container,
+        der parallel läuft und als Prozess unabhängig vom CMS ist. Der nachfolgende Code ist die Startup klasse, die alle Services definiert:
+
+        \begin{lstlisting}          
+          public void ConfigureServices(IServiceCollection services)
+          {
+              services.AddControllersWithViews();
+              services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+              services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
+  
+              services.AddSingleton<IMongoClient, MongoClientBase>(s =>
+              {
+                  return new MongoClient(Backend.GetDatabaseConnectionString());
+              });
+          }
+        \end{lstlisting}
+
+        Der Singleton wird über das Interface \textit{IMongoClient} bereit gestellt bzw. bei der Instanziierung des Controllers als Dependency übergeben.
+        Dadurch bleibt der Code flexibel: sollte sich die Implementierung des MongoClients verändern und das Interface gleich bleiben, müssen im Code keine Änderungen vorgenommen werden.
+        Es muss lediglich die Startup-Methode angepasst werden, um bei Bedarf die Konfiguration des Singleton zu ändern.        
+
+        \paragraph{SQL vs. noSQL}
+
+          Ein großes Problem, was wir zu Beginn des Projektes hatten war die sich ständig verändernde Datenstruktur. Die Anforderungen und Verarbeitung der Metadaten und 
+          Assets machten mehrere Revisionen der SQL-Datenbankstruktur notwendig. Das machte immer einen großen Teil des Codes obsolet, der neu geschrieben werden musste.
+          SQL-Datenbanken können bei ASP.NET Core mittels des Entity Frameworks - kurz EF - als Schnittstelle verwendet werden. Dieses EF verlangte ebenfalls stark typisierte Modelle, 
+          die problemlos geändert werden konnten. Ein Problem ist allerdings, dass SQL-Datenbanken genau diese Struktur auch auf Tabellenebene wiederspiegeln müssen.
+          Daher muss auch jedes mal bei einer Änderung der Datenstruktur die Klasse, die mit der Datenbank interagiert - der sog. Model-Builder - neu geschrieben werden.
+          
+          Ein weiteres Problem ist \textit{Class-Table Inheritance}. Aus Objektorientierten Programmiersprachen kennt man das Prinzip der Vererbung. 
+          Hierbei können Basisklassen definiert werden, wie z.B. ein \textit{Asset}. Von dieser Basisklasse können dann wiederum weitere Klassen abgeleitet werden, 
+          wie \textit{Modell} oder \textit{Video}. Diese Beziehung ist in SQL nur über Umwege über die Class-Table Inheritance möglich und stellt eher einen Workaround dar.
+
+          noSQL-Datenbanken wie MongoDB haben dieses Problem nicht. Das stark typisierte Modell kann auch über mehrere Vererbungsstufen erstellt werden und problemlos
+          mit der flexiblen Dokumentenstruktur dieses Datenbanktyps interagieren. Das hat unseren Entwicklungsprozess erheblich vereinfacht, weil es die Anpassung 
+          des Datenmodells darauf reduziert hat, die Struktur im Modell und ggfs. der Businesslogik zu ändern.
 
       \subsubsection{Development und Integration Workflow}
 
