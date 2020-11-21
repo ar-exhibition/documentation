@@ -115,10 +115,23 @@
       Unser CMS ist eine Kombination aus sowohl einem Frontend für bspw. Upload von Content, Betrachten des zur Verfügung stehenden Contents und Pflege von Szenen und Metadaten 
       als auch einem Backend, was die Daten im Hintergrund speichert und verwaltet bzw. auf Abfrage zur Verfügung stellt.
 
-      Programmiert ist die Plattform in C# mittels des Frameworks ASP.NET Core 3.1. Das ist die aktuelle LTS-Version vom OpenSource-Framework.
-      ASP.NET Core ermöglicht es, eine Plattform zum allergrößten Teil in C# zu entwickeln und die bekannten und bewährten Tools aus dem .NET Ökosystem und NuGet-Packages zu verwenden.
+      \subsubsection{Model-View-Controller Pattern}
 
-      ...continue here...
+        Programmiert ist die Plattform in C\# mittels des Frameworks ASP.NET Core 3.1. Das ist die aktuelle LTS-Version vom OpenSource-Framework.
+        ASP.NET Core ermöglicht es, eine Plattform zum allergrößten Teil in C\# zu entwickeln und die bekannten und bewährten Tools aus dem .NET Ökosystem und NuGet-Packages zu verwenden.
+        Dabei verwendet es das MVC-Pattern\footnote{Model View Controller}. Dieses Design-Pattern trennt die funktionalitäten der Datenstruktur \textit{Model-Komponnte}, Präsentation \textit{View}
+        und Businesslogik \textit{Controller} voneinander. Der Code ist dadurch leichter verständlich, wartbarer und weniger fehleranfällig.
+        
+        Die \textit{View}-Komponenten zur visuellen Präsentation, welche normalerweise durch HTML-Code dargestellt werden, bestehen bei ASP.Net Core aus sog. Razor-Pages.
+        Das sind HTML-Dokumente, welche mittels stark typisierter Modelle eine klar definiterte Schnittstelle - die \textit{Model-Komponente} - mit dem jeweiligen Controller interagieren.
+
+        Die \textit{Model-Komponente} sind einfache Klassen, die die grundlegende Struktur der verabeiteten Daten und der zugrundeliegenden Datenbank repräsentieren.
+        Mittels Annotationen können in die Modelklasse beispielsweise Validierungen und Funktionalitäten an die Modelle angehängt werden, die vom Compiler automatisch hinzugefügt werden.
+        Dadurch wird Boilerplate-Code vermieden und die Entwicklungsgeschwindigkeit erhöht.
+
+        \textit{Controller} stellen die Businesslogik der Anwendung bereit. Das ist die Kommunikation mit dem Datenbank-Provider, Dateisystemzugriff oder die Verarbeitung von eingegeben Daten.
+        Mittels Dependency-Injection können in jedem Controller zentral verwaltete Services nach Bedarf zur Verfügung gestellt werden. Das macht den Code vom Contoller leicht lesbar, selbst dokumentierend
+        und frei von Boilerplate-Code.
 
       \subsubsection{Frontend}
 
