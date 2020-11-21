@@ -23,6 +23,35 @@
 % Header and Footer
 \usepackage{fancyhdr}
 
+%bibtex
+\usepackage{cite}
+
+%code snippets
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=HTML,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{Lückert, Neudecker, Schnoor}
@@ -112,11 +141,267 @@
 
     \subsection{Content-Management-System}
 
-    
-    --> unfassbar toller text übers cms
+      Unser CMS ist eine Kombination aus sowohl einem Frontend für bspw. Upload von Content, Betrachten des zur Verfügung stehenden Contents und Pflege von Szenen und Metadaten 
+      als auch einem Backend, was die Daten im Hintergrund speichert und verwaltet bzw. auf Abfrage zur Verfügung stellt. Je nach Umfang und Struktur des Projekts spricht man ggfs. auch 
+      von der sog. \textit{Middleware}. Dieser Begriff ist häufig sehr abstrakt definiert und wobei die Grenze zwischen Frontend und Middleware recht eindeutig ist,
+      ist sie zwischen Middleware und Backend sehr viel schwieriger zu ziehen. In unserem Fall ist die Middleware zum Zwecke der Einfachheit in das Backend integriert.
 
+      Ferner ist es abhängig von der Größe des Projekts durchaus üblich da Frontend und Backend in getrennten autonomen Einheiten zu entwickeln. 
+      Bei großen Enterprise-Projekten ist das sogar die Regeln, weil es CICD\footnote{Continuous Integration/Continous Delivery} stark vereinfacht.
+      Dabei kommunizieren Front- und Backend über eine definierte Schnittstelle (z.b. ein JSON\footnote{JavaScript Object Notation}-Feed).
+      Teams können an den jeweiligen Problem ihrer Domäne arbeiten ohne Rücksicht auf andere Komponenten nehmen zu müssen.
 
-    \subsubsection{Aufbau der Datenbank}
+      In unserem CMS sind aufgrund des begrenzten Umfangs alle Komponenten in einem Projekt integriert. 
+      Die Vorteile der schnellen Entwicklung und der einfacheren Integration überwiegen an dieser Stelle.
+
+      \subsubsection{Model-View-Controller Pattern}
+
+        Programmiert ist die Plattform in C\# mittels des Frameworks ASP.NET Core 3.1. Das ist die aktuelle LTS-Version vom OpenSource-Framework.
+        ASP.NET Core ermöglicht es, eine Plattform zum allergrößten Teil in C\# zu entwickeln und die bekannten und bewährten Tools aus dem .NET Ökosystem und NuGet-Packages zu verwenden.
+        Dabei verwendet es das MVC-Pattern\footnote{Model View Controller}. Dieses Design-Pattern trennt die funktionalitäten der Datenstruktur \textit{Model-Komponnte}, Präsentation \textit{View}
+        und Businesslogik \textit{Controller} voneinander. Der Code ist dadurch leichter verständlich, wartbarer und weniger fehleranfällig. Schematisch sieht das folgendermaßen aus:
+
+        [Put here some nice picture about MVC-Pattern]
+        
+        Die \textit{View}-Komponenten zur visuellen Präsentation, welche normalerweise durch HTML-Code dargestellt werden, bestehen bei ASP.Net Core aus sog. Razor-Pages.
+        Das sind HTML-Dokumente, welche mittels stark typisierter Modelle eine klar definiterte Schnittstelle - die \textit{Model-Komponente} - mit dem jeweiligen Controller interagieren.
+
+        Die \textit{Model-Komponente} sind einfache Klassen, die die grundlegende Struktur der verabeiteten Daten und der zugrundeliegenden Datenbank repräsentieren.
+        Mittels Annotationen können in die Modelklasse beispielsweise Validierungen und Funktionalitäten an die Modelle angehängt werden, die vom Compiler automatisch hinzugefügt werden.
+        Dadurch wird Boilerplate-Code vermieden und die Entwicklungsgeschwindigkeit erhöht.
+
+        \textit{Controller} stellen die Businesslogik der Anwendung bereit. Das ist die Kommunikation mit dem Datenbank-Provider, Dateisystemzugriff oder die Verarbeitung von eingegeben Daten.
+        Mittels Dependency-Injection können in jedem Controller zentral verwaltete Services nach Bedarf zur Verfügung gestellt werden. Das macht den Code vom Contoller leicht lesbar, selbst dokumentierend
+        und frei von Boilerplate-Code.
+
+      \subsubsection{Frontend}
+
+        Die Funktionalität unseres Frontends setzt sich aus mehreren Teilen zusammen. Die wichtigsten Elemente, welche besonderer Aufmerksamkeit bedürfen werden in diesem Absatz erläutert.
+
+        \paragraph{Übersich der Funktionalität}
+
+          Der übergeordnete Zweck des CMS ist - wie bereits erwähnt - die Bereitstellung und Verwaltund des Contents für die Client App. Dafür gibt es die folgenden Einzelbestandteile:
+
+          \begin{itemize}
+            \item \textit{About}-Page mit Informationen zum Projekt
+            \item \textit{Upload} Bereich, wo der User sein Modell hochladen kann
+            \item \textit{Showcase} Funktionalität zum Betrachten der Modelle im Browser
+            \item \textit{Kurator} Bereich zur Pflege aller Metadaten
+            \item \textit{Project-Pages} welche nur über einen generierten QR-Code erreichbar sind
+          \end{itemize}
+          
+          Zur einheitlichen Einbettung dieser einzelnen Sektionen verwenden wir sog. Razor-Pages.
+
+        \paragraph{Razor-Pages}
+
+        Die zuvor erwähnte \textit{View}-Komponente wird mittels *.cshtml programiert. Das ist html-code, der durch interoperabilität mit C\#-Modell Klassen augmentiert wurde.
+        Das sieht z.B. so aus:
+
+        \begin{lstlisting}          
+          @{
+            ViewData["Title"] = "Curator Area";
+          }
+          <h1>@ViewData["Admin"]</h1>
+          <div class="text-left">
+            <h1 class="display-4">Fresh Admin Panel</h1>
+            <p>
+                <a asp-controller="Scenes" asp-action="Create">Manage Scenes</a>
+            </p>
+            <p>
+                <a asp-controller="StudyProgrammes" asp-action="Index">Studies Overview</a>
+            </p>
+            <p>
+                <a asp-controller="Courses" asp-action="Index">Courses Overview</a>
+            </p>
+            @*<p>
+                <a asp-controller="Creators" asp-action="Index">Creators Overview (Only Temporary!)</a>
+            </p>*@
+            <p>
+                <a asp-controller="Assets" asp-action="Index">Scene Asset Table</a>
+            </p>
+            <p>
+                <a asp-controller="Terms" asp-action="Index">Terms Overview</a>
+            </p>
+          </div>
+        \end{lstlisting}
+        
+        die einzelnen Komponenten hier sind:
+
+        \paragraph{ViewData} welche die Schnittstelle zu einem definierten \textit{ViewBag} innerhalb der C\#-Welt darstellen. Dadurch können Dropdown-Menüs o.ä. befüllt werden.
+        Diese Komponenten werden durch ein vorangestelltes @-Symbol gekennzeichnet.
+
+        \paragraph{HTML-Tags} welche wie bei gewöhnlichem HTML funktionieren. Sie reagieren auf Javascript und CSS wie gewöhnliche HTML5 Komponenten.
+
+        \paragraph{ASP-Komponenten} werden innerhalb des *.cshtml Dokuments mit dem \textit{ASP}-Präfix gekennzeichnet. Diese elemente werden z.B. bei einem Formular in den Konstruktur
+        des Datenmodells übergeben oder rufen bestimme Aktionen innerhalb des Controllers aus.
+        
+        \paragraph{Model Viewer}
+
+          Eine Besonderheit innerhalb unseres Frontends stellt der Model-Viewer dar. Dieser ist ein Showcase, um die hochgeladenen Inhalte ausserhalb der Client-App bereits in der AR zu betrachten.
+          Dazu verwenden wir den \textit{Google Model Viewer}\cite{ModelViewer:online}. Das ist eine kleine Javascript-Library, welches die Darstellung im Browser des Benutzers übernimmt.
+          Man übergibt lediglich einen Link zum Model und je nach den Fähigkeiten des Endgeräts sind verschiedene Darstellungsarten möglich:
+
+          [put here screenshots of AR, Model only and Desktop]
+          [Create references to BU]
+
+          Im AR-Modus wird das Modell vom ModelViewer in der Umgebung positioniert und kann von allen Seiten betrachtet werden [1]. 
+          In der Model-Only Ansicht [2] kann der Benutzer das Modell ohne die Umgebung betrachten.
+          Die Desktop-Ansicht erlaubt es, mittels der Maus das Modell von allen Seiten zu betrachten.
+
+          Ferner wird beim Upload mittels des Model-Viewers der Thumbnail\textit{kleines Vorschaubild in Übersichten} vom User festgelegt:
+
+          [Screenshot of upload form with Thumbnail]        
+
+          \textbf{Verweis auf die GLTF/USDZ Problematik?}
+
+      \subsubsection{Backend}
+
+        Das Backend ist eine abstrakte Bezeichnung für alle Komponenten, die daran beteiligt sind ein definiertes Verhalten oder eine Funktionalität bereit zu stellen. 
+        In unserem CMS übernimmt das Backen die folgenden Aufgaben:
+
+        \begin{itemize}
+          \item Kommunikation mit der Datenbank
+          \item Bereistellen der Content-API für die Client App
+          \item Verwaltung des Contents auf dem Dateisystem des Hosts
+          \item Erzeugen der Marker für einzelnen Szenen
+          \item Darstellung der Modelle in der Showcase Sektion
+          \item Hintergrundprozess zur Konvertierung in USDZ-Dateien
+        \end{itemize}
+
+        Herauszuheben sind dabei die beiden Komponenten \textit{Content API} und \textit{Dateiverwaltung} und \textbf{USDZ Konverter hier?}. 
+        Eine ausführlichere Erläuterung der Datenbankinterkation folgt im nächsten Kapitel,
+
+        \paragraph{Content API} ist unsere Schnittstelle zur Client App. Dafür wird mittels eines einfachen Aufrufs über eine definierte URL\footnote{https://cms.hotpot.codes/api/content}
+        im CMS ein JSON-String erzeugt, der alle notwendigen Informationen und Links zum runterladen der einzelnen Modelle liefert. Ein kleiner Ausschnit sieht z.B. so aus:
+
+        \begin{lstlisting}          
+          {
+            "Assets": [
+              {
+                "Creator": {
+                  "_id": "5f9a2c8f6765189948e607c2",
+                  "CreatorName": "Vincent Schnoor",
+                  "Assets": [
+                    "5f9a2c8f6765189948e607c3",
+                    "5f9a2d4a6765189948e607c4"
+                  ]
+                },
+                "Course": {
+                  "_id": "5f9a2c326765189948e607be",
+                  "CourseName": "3D Modelling",
+                  "StudyProgramme": "Digital Reality",
+                  "Term": "SS19",
+                  "University": "HAW Hamburg",
+                  "Assets": [
+                    "5f9a2c8f6765189948e607c3",
+                    "5f9a2d7b6765189948e607c6",
+                    "5f9aa9736765189948e607de"
+                  ],
+                  "ProgrammeNavigation": null,
+                  "TermNavigation": null,
+                  "UniversityNavigation": null
+                },
+                "AssetLinkUSDZ": "http://cms.hotpot.codes/static/content/assets/2b9c4a6a-1e33-5bc3-aa9c-d64f5fe9d261.usdz",
+                "_id": "5f9a2c8f6765189948e607c3",
+                "AssetName": "Jose",
+                "AssetType": "3d",
+                "AssetFilename": "2b9c4a6a-1e33-5bc3-aa9c-d64f5fe9d261.glb",
+                "AssetLink": "http://cms.hotpot.codes/static/content/assets/2b9c4a6a-1e33-5bc3-aa9c-d64f5fe9d261.glb",
+                "ExternalLink": null,
+                "ThumbnailFilename": "d994e868-3b7e-51a6-bd34-65e1d4ae917d.png",
+                "ThumbnailLink": "http://cms.hotpot.codes/static/content/thumbnails/d994e868-3b7e-51a6-bd34-65e1d4ae917d.png",
+                "CreationDate": "2020-10-29T02:44:31.825Z",
+                "Deleted": false
+              },
+            ...
+        \end{lstlisting}    
+        
+        Dieser JSON-String wird auf Anfrage generiert. Die Links zum Runterladen zeigen auf die Dateien im Dateisystem und können direkt von dort heruntergeladen werden.
+
+        Ferner können durch spezielle Abfragen aus der Client APP heraus bestimmte Objekte die Szenen oder Anchor gelöscht werden. 
+        Für jede Aufgabe gibt es einen definierten API-Endpoint\footnote{Der Endpoint ist eine definierte URL, über die eine gewünschte Funktionalität erreichbar ist}.
+
+        \paragraph{Dateiverwaltung} ist wichtig für das CMS, weil dadurch die Inhalte vom Host - dem eigentlichen Stück Hardware auf dem das CMS läuft - bereitgestellt werden.
+        Durch die Verwendung von Docker\footnote{Eine Virtualisierungsumgebung zur Erzeugung von leichtgewichtigen Microservices auf dem Host} sind wir Hardwareagnostisch.
+        Das heisst, dass Docker hinter den Kulissen mit dem Dateisystem auf dem Host interagiert. Das von ASP.Net Core bereitgestellte Interface funktioniert unabhängig
+        vom Host System immer auf die gleiche Weise. Dadurch lässt sich fehlerfreies und konsistentes Verhalten erreichen.
+
+        Besonderes Augenmerk muss bei der Speicherung und Verwaltung der Inhalte auf Dateinamen gelegt werden. Dadurch werden Konflikte bei Dateinamen vermieden und es kann
+        davon ausgegangen werden, dass jeder Dateiname einmalig ist. Das lässt sich zwar auch erreichen, in dem man jeder Datei einen Zeitstempel und beliebiges Präfix zuweist.
+        Effizienter und einfacher verständlich ist es mithilfe des Dateinamens und einem Zeitstempel eine UUID zu generieren, unter der die Datei gespeichert wird.
+        Das hat ferner den Vorteil, dass die Dateien auf dem Dateisystem anonymisiert werden. Diese UUID wird schließlich in der JSON-Api als \textit{AssetFilename} ausgegeben.       
+
+      \subsubsection{Aufbau der Datenbank}
+
+        Unser CMS benötigt eine Datenbank, die im Hintergrund einen persistenten Datenspeicher bereit stellt.
+        Das hat gegenüber einer Speicherung in einer Textdatei oder zur Laufzeit in Datenstrukturen wie Linked Lists oder Arrays mehrere Vorteile:
+
+        \begin{itemize}
+          \item Der Datenspeicher ist eine autonome Einheit
+          \item Nach Beenden des Serverprogramms bleiben die Daten erhalten
+          \item Eingaben und Abfragen können einfacher abstrahiert werden
+        \end{itemize}
+
+        Wir haben uns für unser CMS für eine sog. noSQL Datenbank von MongoDB entschieden. Dabei werden Daten als \textit{Dokumente} gespeichert. 
+        In MongoDB werden Datensätze als Dokumente bezeichnet. Diese kann man anschaulich mit einem JSON-String gleichsetzen, die in sog. \textit{Collections},
+        also Sammlungen von Dokumenten gespeichert werden. Dabei müssen nicht alle Dokumente zwangsläufig eine identische Struktur haben.
+        Der Vorteil dieser Dokumentenbasierten Speicherung ist, dass sich einzelne Dokumente durchaus unterscheiden können, sofern sie über gemeinsame Pararmeter abgefragt werden können.
+
+        [Graphic about MongoDB schema]
+
+        Der große Vorteil des MVC-Patterns ist die starke typisierung der Modelle, was eine Interaktion mit einer MongoDB stark vereinfacht.
+        Die Anwendung kann bei der Verwendung eines vordefinierten Datenmodells immer darauf vertrauen, dass die Datenbank immer die geforderten Daten zurück liefert 
+        und muss nichts parsen bzw. sanity checks der abgefragten Daten vornehmen.
+
+        [Database Schema]
+        
+        Anders als unser CMS, was wir komplett selbst programmiert haben, wird das Datenbankbackend einfach mittels eines sog. \textit{Service-Providers} eingebunden
+        und steht dann mittels Dependency-Injection dem entsprechenden Controller zur Verfügung. Dieser Service-Provider wird zum Start der Serveranwendung einmalig 
+        konfiguriert und steht dann als Singleton\footnote{Einzige Instanz einer Klasse, die global erreichbar ist} zur Verfügung. Die Datenbank selbst ist ein Docker-Container,
+        der parallel läuft und als Prozess unabhängig vom CMS ist. Der nachfolgende Code ist die Startup klasse, die alle Services definiert:
+
+        \begin{lstlisting}          
+          public void ConfigureServices(IServiceCollection services)
+          {
+              services.AddControllersWithViews();
+              services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+              services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
+  
+              services.AddSingleton<IMongoClient, MongoClientBase>(s =>
+              {
+                  return new MongoClient(Backend.GetDatabaseConnectionString());
+              });
+          }
+        \end{lstlisting}
+
+        Der Singleton wird über das Interface \textit{IMongoClient} bereit gestellt bzw. bei der Instanziierung des Controllers als Dependency übergeben.
+        Dadurch bleibt der Code flexibel: sollte sich die Implementierung des MongoClients verändern und das Interface gleich bleiben, müssen im Code keine Änderungen vorgenommen werden.
+        Es muss lediglich die Startup-Methode angepasst werden, um bei Bedarf die Konfiguration des Singleton zu ändern.        
+
+        \paragraph{SQL vs. noSQL}
+
+          Ein großes Problem, was wir zu Beginn des Projektes hatten war die sich ständig verändernde Datenstruktur. Die Anforderungen und Verarbeitung der Metadaten und 
+          Assets machten mehrere Revisionen der SQL-Datenbankstruktur notwendig. Das machte immer einen großen Teil des Codes obsolet, der neu geschrieben werden musste.
+          SQL-Datenbanken können bei ASP.NET Core mittels des Entity Frameworks - kurz EF - als Schnittstelle verwendet werden. Dieses EF verlangte ebenfalls stark typisierte Modelle, 
+          die problemlos geändert werden konnten. Ein Problem ist allerdings, dass SQL-Datenbanken genau diese Struktur auch auf Tabellenebene wiederspiegeln müssen.
+          Daher muss auch jedes mal bei einer Änderung der Datenstruktur die Klasse, die mit der Datenbank interagiert - der sog. Model-Builder - neu geschrieben werden.
+          
+          Ein weiteres Problem ist \textit{Class-Table Inheritance}. Aus Objektorientierten Programmiersprachen kennt man das Prinzip der Vererbung. 
+          Hierbei können Basisklassen definiert werden, wie z.B. ein \textit{Asset}. Von dieser Basisklasse können dann wiederum weitere Klassen abgeleitet werden, 
+          wie \textit{Modell} oder \textit{Video}. Diese Beziehung ist in SQL nur über Umwege über die Class-Table Inheritance möglich und stellt eher einen Workaround dar.
+
+          noSQL-Datenbanken wie MongoDB haben dieses Problem nicht. Das stark typisierte Modell kann auch über mehrere Vererbungsstufen erstellt werden und problemlos
+          mit der flexiblen Dokumentenstruktur dieses Datenbanktyps interagieren. Das hat unseren Entwicklungsprozess erheblich vereinfacht, weil es die Anpassung 
+          des Datenmodells darauf reduziert hat, die Struktur im Modell und ggfs. der Businesslogik zu ändern.
+
+      \subsubsection{Development und Integration Workflow}
+
+        \paragraph{Docker}
+
+        \paragraph{SVN mit Git}
+
+        \paragraph{Github Actions}
+
 
     \subsection{AR App}
 
@@ -475,6 +760,7 @@
         Wie zu sehen ist, ist das Potenzial der App bei Weitem noch nicht ausgeschöpft und wird auch in Zukunft von uns weiter entwickelt und verbessert werden. 
         Die hier vorgestellten Features stellen unsere Ideen für eine mögliche zukünftige Erweiterung der App dar.
 
+  \bibliography{literature}        
   \bibliographystyle{IEEEtran}
-  \bibliography{literature}
+
 \end{document}
