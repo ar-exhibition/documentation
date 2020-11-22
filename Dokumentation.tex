@@ -301,15 +301,15 @@
                   "TermNavigation": null,
                   "UniversityNavigation": null
                 },
-                "AssetLinkUSDZ": "http://cms.hotpot.codes/static/content/assets/2b9c4a6a-1e33-5bc3-aa9c-d64f5fe9d261.usdz",
+                "AssetLinkUSDZ": "http://cms.hotpot.codes/static/content/assets/",
                 "_id": "5f9a2c8f6765189948e607c3",
                 "AssetName": "Jose",
                 "AssetType": "3d",
                 "AssetFilename": "2b9c4a6a-1e33-5bc3-aa9c-d64f5fe9d261.glb",
-                "AssetLink": "http://cms.hotpot.codes/static/content/assets/2b9c4a6a-1e33-5bc3-aa9c-d64f5fe9d261.glb",
+                "AssetLink": "http://cms.hotpot.codes/static/content/assets/",
                 "ExternalLink": null,
                 "ThumbnailFilename": "d994e868-3b7e-51a6-bd34-65e1d4ae917d.png",
-                "ThumbnailLink": "http://cms.hotpot.codes/static/content/thumbnails/d994e868-3b7e-51a6-bd34-65e1d4ae917d.png",
+                "ThumbnailLink": "http://cms.hotpot.codes/static/content/thumbnails/",
                 "CreationDate": "2020-10-29T02:44:31.825Z",
                 "Deleted": false
               },
@@ -396,12 +396,159 @@
 
       \subsubsection{Development und Integration Workflow}
 
+        Wir haben von vornherein darauf wert gelegt, dass wir einen Workflow implementieren, der paralleles Arbeiten an den Komponenten ermöglicht.
+        Speziell im späteren Verlauf des Projektes war es wichtig, dass der App ständig eine Datenbank zur Verfügung stand, während andererseits an dieser Datenbank entwickelt wurde.
+        Die Lösungen, die wir dafür in unseren Workflow implementiert haben sind State-Of-The-Art und bilden bereits im kleinen Maßstab die Arbeitsweise von großen Firmen
+        ab, wo teilweise hunderte Entwickler an einer gemeinsamen Codebasis arbeiten. Das Gleiche gilt auf für das Deployment der Anwendung.
+
+        Wenngleich unser Workflow aufgrund der Teamgröße weniger Bürokratisch ist.
+
+        \paragraph{Versionsverwaltung mit Git}
+
+          Wir haben bei unserer Entwicklung stark auf Github als unser VCS\footnote{Version Control System} gesetzt. Das Vorgehen hier ist wie folgt:
+
+          \begin{itemize}
+            \item Entwickler A schreibt code für ein neues Feature auf einem sog. Feature-Branch
+            \item Entwickler A \textit{commited} diesen Code in ein Repository
+            \item Ist das Feature \textit{Production-Ready} wird mittels eines Pull-Request der Code in den Master-Branch integriert
+            \item Entwickler B kann sich nun den aktuellen Code aus dem Master-Branch in seinen eigenen Feature-Branch integrieren
+          \end{itemize}
+
+          Durch diese Arbeitsweise werden später Konflikte vermieden, wenn mehrere Entwickler parallel am gleichen Projekt arbeiten.
+          Alle Entwickler arbeiten in ihrer Entwicklung in ihrem eigenen Feature-Branch, der bei Fertigstellung in den Master-Branch einfliesst.
+
+          [Put here screenshot]
+          
+          Dabei können vor der Genehmigung von Pull-Requests auch Code-Reviews durchgeführt werden, um die Qualität des Codes zu evaluieren,
+          bevor er in Produktion geht.
+          
+          Die Speicherung auf einem Online-Repository bietet darüber hinaus den Vorteil, dass keine Daten verloren gehen können.
+          Es stellt also neben einer Versions- und Qualitätskontrolle ebenfalls ein automatisches Backup dar.
+
+          Sollte sich also Beispielsweise ein Bug im Code einschleichen, der erst nach einiger Zeit bemerkt wird, kann die Historie
+          der Commits nachverfolgt werden, um ggfs. den funktionierenden Code wiederherzustellen.
+
         \paragraph{Docker}
 
-        \paragraph{SVN mit Git}
+          Wie bereits im vorigen Kapitel erwähnt, ist Docker eine Lösung, um Anwendungen in kleine und schlanke Container zu isolieren, um sie auf einem System mit beliebigem 
+          Betriebssystem auszuführen. Diese Container lassen sich mittels sog. \textit{Environment Variables} nach Bedarf schnell für eine bestimmte Umgebung konfigurieren.
+          Das kann z.B. beinhalten:
 
-        \paragraph{Github Actions}
+          \begin{itemize}
+            \item Usernamen und Passwörter für Ressourcenzugriff
+            \item Netzwerkkonfiguration
+            \item Development oder Production Umgebungen
+            \item Datenspeicherorte auf dem Host-System
+          \end{itemize}
 
+          Dafür werden sog. \textit{Orchestration-Tools} wie Docker-Compose, Docker-Swarm oder Kubernetes verwendet. 
+          Diese erlauben eine flexible Orchestrierung mehrerer voneinander abhängiger Container in einer funktionellen Einheit.
+          In unserem Beispiel ist das die Backend-App, die Datenbank, der USDZ-Konverter Service und ein Service für ein automatisches Deployment.
+          Das wird über ein \textit{Docker-Compose.yml} File realisiert. Diese sehen folgendermaßen aus:
+
+          \begin{lstlisting}          
+            version: '3.4'
+
+            services:
+            
+              cmsProduction:
+                image: ${REGISTRY_HOST}/cms:${TAG}
+                container_name: cms_Frontend
+                restart: always
+                expose:
+                  - "8080"
+                environment:
+                  DATABASE_HOST: ${MONGO_HOST}
+                  DATABASE_REMOTE_PORT: ${MONGO_PORT}
+                  DATABASE_NAME: ${MONGO_DB_NAME}
+                  DATABASE_USER: ${MONGO_INIT_USERNAME}
+                  DATABASE_PASSWORD: ${MONGO_INIT_PASSWORD}
+                  ASPNETCORE_ENVIRONMENT: ${ASP_CONFIG}
+                  USDZ_CONVERTER_HOST: ${DOCKER_HOST_USDZ}
+                  USDZ_CONVERTER_PORT: ${DOCKER_PORT_USDZ}
+                  VIRTUAL_HOST: ${CMS_V_HOST}
+                  VIRTUAL_PORT: ${CMS_V_PORT}
+                  LETSENCRYPT_HOST: ${CMS_LE_HOST}
+                  LETSENCRYPT_EMAIL: ${CMS_LE_EMAIL}
+                volumes:
+                  - ${ASSETS}:/app/static/content/assets
+                  - ${WORLDMAPS}:/app/static/content/worldmaps
+                  - ${MARKER}:/app/static/content/marker
+                  - ${THUMBS}:/app/static/content/thumbnails
+                networks:
+                  - proxy
+                  - app
+            
+              mongo:
+                image: mongo
+                restart: always
+                container_name: cms_Mongo
+                ports:
+                  - ${MONGO_PORT}:${MONGO_PORT}
+                environment:
+                  MONGO_INITDB_ROOT_USERNAME: ${MONGO_INIT_USERNAME}
+                  MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INIT_PASSWORD}
+                volumes:
+                  - ${MONGO_HOST_DATABASE_VOLUME}:/data/db
+                networks:
+                  - proxy
+                  - app
+                  
+              watchtower:
+                image: containrrr/watchtower
+                container_name: cms_Watchtower
+                volumes:
+                  - /var/run/docker.sock:/var/run/docker.sock
+                  - /root/.docker/config.json:/config.json
+                command: --interval 30
+                
+              usdz:
+                image: marlon360/gltf-to-usdz-service:latest
+                container_name: cms_USDZ
+                labels:
+                  com.centurylinklabs.watchtower.enable: "false"
+                volumes:
+                  - ${ASSETS}:/usr/app
+                networks:
+                  - app
+            
+            networks:
+              proxy:
+                external:
+                  name: nginx-proxy
+              app:
+            
+          \end{lstlisting}
+
+          Ohne auf jedes Detail einzugehen, sind einige wichtige Komponenten nennenswert: Die jeweiligen Container werden unter \textit{services} mit ihrer jeweiligen Konfiguration aufgelistet.
+          Unter \textit{environment} werden die bereits erwähnten Environment Variables definiert. Diese liegen zur einfachereren Verwaltung und aus Sicherheitsgründen in einer \textit{.env}-Datei
+          im gleichen Verzeichnis und werden von Docker beim Start ausgelesen. Ferner werden für jeden Container definierte Namen zugewiesen. Weil solch ein Compose-File immer alle Services startet,
+          können funktional zusammenhängende Services in diesen Dateien gemeinsam konfiguriert werden.
+
+        \paragraph{Deployment}        
+
+          Die Fäden laufen zusammen bei sog. \textit{Github Actions}. Das sind Programme, die auf dem Repostory ausgeführt werden, wenn bestimmte Bedingungen erfüllt sind.
+          In unserem Konkreten Fall werden diese getriggert, wenn Code in den Master-Branch eingefügt wird. Diese Actions bauen dann das Docker-Image und laden es auf unsere interne
+          Docker-Registry hoch. Der in der docker-compose ausgeführte \textit{Watchtower} prüft in regelmäßigen Abständen, ob sich das Docker-Image geändert hat und triggert in diesem Fall
+          den Deployment-Prozess. Dazu wird das neue Image heruntergeladen, der jeweilige Container \textit{gracefully}\footnote{Eingehende Client-Verbindungen und Schreibprozesse werden kontrolliert beendet.} 
+          beendet und anschließend mit dem neuen Image wieder gestartet. Da im Idealfall keine Anpassung der Konfiguration notwendig ist, kann dieser Prozess komplett automatisiert erfolgen.
+          Der jeweilige Verantwortliche macht nur den Pull-Request auf den Master Branch und alle weiteren Schritte erfolgen dann automatisch und nach wenigen Minuten ist das neue Release veröffentlicht.
+
+          Das bietet einen standardisierten Workflow, der effizient und weniger fehleranfällig ist als die klassische Methode, wo ein Administrator eine neue Version in den Systemkontext einbetten und
+          dann starten musste. Moderne Tools wie \textit{Puppet} oder \textit{Chef} machen das zwar ebenfalls einfacher aber eine Container-Lösung ist diesem Vorgehen in vielerlei Hinsicht überlegen.
+
+          [Put here Image of Development and Deployment Cycle from Presentation]
+
+        \paragraph{Test vs. Production}
+
+          In der Entwicklung hatten wir etwa ab der Mitte des Projekts das Problem, dass für die Entwicklung der App das Backend ständig verfügbar sein musste.
+          Wird parallel an dem Backend gearbeitet, ist das allerdings nicht immer möglich, weil Bugs oder neue Features häufig zu einer nicht-Verfügbarkeit führen.
+          Daher sind wir relativ frühzeitig auf ein zweigleisiges Modell umgestiegen, wo es einen Development- und einen Production-Server gibt. 
+          Ersterer konnte vom Entwickler bei Bedarf das neue Image starten und ermöglichte Debugging und Testen ohne die Entwicklung der App zu beeinträchtigen.
+          War die implementierung des neuen Features \textit{Production Ready}, konnte der Deployment-Prozess gestartet werden und der neue Code wurde dann auf dem Production
+          Server deployed. Außerdem werden an einen Productionserver ganz andere Anforderungen hinsichtlich Netzwerkbandbreite, Verfügbarkeit und Performance gelegt.
+          Dieser muss im Zweifelsfall eine große Menge User bedienen können. Der Development Server hat nur schlimmstenfalls nur einige wenige User und wird nur von den Entwicklern verwendet.
+          Das ist neben der bereits erwähnten Verfügbarkeit für die App Entwicklung auch kosteneffizienter, weil spezialisierte Maschinen verwendet werden können.
 
     \subsection{AR App}
 
