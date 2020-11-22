@@ -137,7 +137,23 @@
     \subsection{Stand der Forschung}
     % Welche Literatur liegt dem Projekt zugrunde, bzw. welche anderen Produkte/Projekte? Inwiefern grenzt sich unser Projekt von diesen ab?
 
-    --> Hier kommt noch ein wenig related work hin. Recherche!
+      Weil die Technologie der Augemented Reality schon seit einiger Zeit existiert, haben sich bereits Forscher und kommerzielle Vorhaben dieser Thematik gewidmet,
+      um AR auch in Ausstellungskontexten zu finden. 
+      Eins der älteren Paper ist von Narumi et. al.\cite{narumi2011digital}, die mittels AR Dioramen mit virtuellen Content überlagert haben.
+      Entgegen unserem Ansatz findet das allerdings als Projektionsüberlagerung statt.
+
+      Okada et. al. haben Mobile Devies genutzt, um Bilder vergangener Tage im Rahmen einer Ausstellung im öffentlichen Raum auf Oberflächen darzustellen\cite{okada2015manseibashi}.
+      Weil das Projekt bereits schon vor 5 Jahren umgesetzt wurde, konnte hier noch keine LiDaR Technologie eingesetzt werden. 
+      Auch wurde hier die soziale Akzeptanz einer solchen Ausstellung untersucht. Wir haben andere Schwerpunkte gesetzt.
+
+      Fuguo und Jing haben 2017 untersucht, wie man Ausstellungen mithilfe des Vuforia AR-Frameworks mit digitalen Inhalten anreichern kann\cite{peng2017mobile}. Durch große Fortschritte
+      im Bereich der Tracking Technologien wird ein Tracking des realen raumes durch Bildmarker - wie im damaligen Vuforia Framework - obsolet.
+
+      Es ist allgemein zu beobachten, dass im Zeitraum 2015-2018 zahllose Forschungsarbeiten sich mit der Technologie der Augmented Reality auseinandergesetzt haben,
+      um deren Einsatz im Ausstellungskontext zu untersuchen. Bei diesen Arbeiten liegt der Fokus mehr auf der Untersuchung des Mediums als solches. Wir grenzen uns insofern ab,
+      als das bei uns der Content im Vordergrund steht. Wie kann man Content zentral speichern und verwalten, wie kann man für mehrere Nutzer ein konsistentes Erlebnis 
+      erreichen.    
+
 
     \subsection{Content-Management-System}
 
@@ -161,7 +177,12 @@
         Dabei verwendet es das MVC-Pattern\footnote{Model View Controller}. Dieses Design-Pattern trennt die funktionalitäten der Datenstruktur \textit{Model-Komponnte}, Präsentation \textit{View}
         und Businesslogik \textit{Controller} voneinander. Der Code ist dadurch leichter verständlich, wartbarer und weniger fehleranfällig. Schematisch sieht das folgendermaßen aus:
 
-        [Put here some nice picture about MVC-Pattern]
+        \begin{figure}[h]
+          \centering
+          \includegraphics[width=.6\textwidth]{MVC.png}
+          \caption{Model-View-Controller Pattern}
+          \label{MVC}
+        \end{figure}
         
         Die \textit{View}-Komponenten zur visuellen Präsentation, welche normalerweise durch HTML-Code dargestellt werden, bestehen bei ASP.Net Core aus sog. Razor-Pages.
         Das sind HTML-Dokumente, welche mittels stark typisierter Modelle eine klar definiterte Schnittstelle - die \textit{Model-Komponente} - mit dem jeweiligen Controller interagieren.
@@ -249,10 +270,19 @@
           Die Desktop-Ansicht erlaubt es, mittels der Maus das Modell von allen Seiten zu betrachten.
 
           Ferner wird beim Upload mittels des Model-Viewers der Thumbnail\textit{kleines Vorschaubild in Übersichten} vom User festgelegt:
+          
+          \begin{figure}[h]
+            \centering
+            \includegraphics[width=.6\textwidth]{UploadForm.PNG}
+            \caption{Upload Formular}
+            \label{createThumb}
+          \end{figure}
 
-          [Screenshot of upload form with Thumbnail]        
+        \paragraph{Darstellung auf iOS Geräten}
 
-          \textbf{Verweis auf die GLTF/USDZ Problematik?}
+          Das Dateiformat, was wir in unserer Client-App verwenden (siehe \ref{3DModel}) ist nicht kompatibel der implementierung des ModelViewers auf iOS Geräten.
+          Deswegen müssen wir für das Funktionieren dieses Features noch eine Konvertierung des 3D-Modells in das sog. \textit{USDZ}-Format\footnote{Ein proprietäres Format von Appel und Pixar} vornehmen.
+          Dafür haben wir in unserer Service-Architektur einen Service im Hintergrund laufen, der sich automatisch darum kümmert.
 
       \subsubsection{Backend}
 
@@ -347,13 +377,33 @@
         also Sammlungen von Dokumenten gespeichert werden. Dabei müssen nicht alle Dokumente zwangsläufig eine identische Struktur haben.
         Der Vorteil dieser Dokumentenbasierten Speicherung ist, dass sich einzelne Dokumente durchaus unterscheiden können, sofern sie über gemeinsame Pararmeter abgefragt werden können.
 
-        [Graphic about MongoDB schema]
+        \begin{figure}[h]
+          \centering
+          \includegraphics[width=.6\textwidth]{MongoDB.PNG}
+          \caption{MongoDB Collections}
+          \label{MongoCollection}
+        \end{figure}
+
+        Das hier sind alle Collections innerhalb unserer Datenbank. Jede dieser Collections speichert ein anderes Datenmodell. Im nachfolgenden Bild ist zum Beispiel die Collection für alle Assets zu sehen.
+        Viele dieser Daten finden sich später im JSON-String wieder, der durch die API-Abfrage weiter oben generiert wird:
+
+        \begin{figure}[h]
+          \centering
+          \includegraphics[width=.6\textwidth]{MongoAssets.PNG}
+          \caption{MongoDB Asset Collection}
+          \label{MongoAssets}
+        \end{figure}
 
         Der große Vorteil des MVC-Patterns ist die starke typisierung der Modelle, was eine Interaktion mit einer MongoDB stark vereinfacht.
         Die Anwendung kann bei der Verwendung eines vordefinierten Datenmodells immer darauf vertrauen, dass die Datenbank immer die geforderten Daten zurück liefert 
         und muss nichts parsen bzw. sanity checks der abgefragten Daten vornehmen.
 
-        [Database Schema]
+        \begin{figure}[h]
+          \centering
+          \includegraphics[width=.6\textwidth]{DB_scheme.png}
+          \caption{SQL-Datenbank Schema}
+          \label{SQLScheme}
+        \end{figure}
         
         Anders als unser CMS, was wir komplett selbst programmiert haben, wird das Datenbankbackend einfach mittels eines sog. \textit{Service-Providers} eingebunden
         und steht dann mittels Dependency-Injection dem entsprechenden Controller zur Verfügung. Dieser Service-Provider wird zum Start der Serveranwendung einmalig 
@@ -417,7 +467,12 @@
           Durch diese Arbeitsweise werden später Konflikte vermieden, wenn mehrere Entwickler parallel am gleichen Projekt arbeiten.
           Alle Entwickler arbeiten in ihrer Entwicklung in ihrem eigenen Feature-Branch, der bei Fertigstellung in den Master-Branch einfliesst.
 
-          [Put here screenshot]
+          \begin{figure}[h]
+            \centering
+            \includegraphics[width=.6\textwidth]{gitBranches.PNG}
+            \caption{Netzwerk mehrerer Branches}
+            \label{GitNetworks}
+          \end{figure}
           
           Dabei können vor der Genehmigung von Pull-Requests auch Code-Reviews durchgeführt werden, um die Qualität des Codes zu evaluieren,
           bevor er in Produktion geht.
@@ -525,6 +580,13 @@
           im gleichen Verzeichnis und werden von Docker beim Start ausgelesen. Ferner werden für jeden Container definierte Namen zugewiesen. Weil solch ein Compose-File immer alle Services startet,
           können funktional zusammenhängende Services in diesen Dateien gemeinsam konfiguriert werden.
 
+          \begin{figure}[h]
+            \centering
+            \includegraphics[width=.6\textwidth]{DCompose.png}
+            \caption{Docker Container Orchestrierung}
+            \label{pipeline}
+          \end{figure}
+
         \paragraph{Deployment}        
 
           Die Fäden laufen zusammen bei sog. \textit{Github Actions}. Das sind Programme, die auf dem Repostory ausgeführt werden, wenn bestimmte Bedingungen erfüllt sind.
@@ -537,7 +599,12 @@
           Das bietet einen standardisierten Workflow, der effizient und weniger fehleranfällig ist als die klassische Methode, wo ein Administrator eine neue Version in den Systemkontext einbetten und
           dann starten musste. Moderne Tools wie \textit{Puppet} oder \textit{Chef} machen das zwar ebenfalls einfacher aber eine Container-Lösung ist diesem Vorgehen in vielerlei Hinsicht überlegen.
 
-          [Put here Image of Development and Deployment Cycle from Presentation]
+          \begin{figure}[h]
+            \centering
+            \includegraphics[width=.6\textwidth]{pipeline.png}
+            \caption{Development Workflow}
+            \label{pipeline}
+          \end{figure}
 
         \paragraph{Test vs. Production}
 
@@ -552,7 +619,7 @@
 
     \subsection{AR App}
 
-    \subsubsection{Verwendung von 3D-Modellen}
+    \subsubsection{Verwendung von 3D-Modellen}\label{3DModels}
     
     Da die Platzierung von 3D-Modellen ein Hauptbestandteil der App ist, wurde ein großer Fokus auf das Dateiformat der 3D-Modelle gelegt. Die dynamische Verwendung der Modelle in der App sollte möglichst einfach und problemlos sein.\\ 
     Aus diesem Grund wurden die verschiedenen von Unity unterstützten Dateiformate miteinander verglichen, um die im Dateiformat unterstützten Funktionalitäten und die Qualität der Darstellung in der App zu vergleichen.\\
