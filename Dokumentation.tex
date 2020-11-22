@@ -8,6 +8,7 @@
 
 % Ordner für Grafiken
 \graphicspath{ {./Grafiken/} }
+\usepackage{float}
 
 \usepackage[utf8]{inputenc}
 \usepackage[german]{babel}
@@ -72,8 +73,8 @@
 
   \begin{abstract}
     Diese Dokumentation befasst sich mit der Entwicklung und den Hintergründen der ARExhibition App, welche ein Teil des XRchitecture-Projekts ist.
-    Wir geben vorab eine Gesamtübersicht über alle Teilaspekte des Projekts und schaffen den Kontext zum Gesamtprojekt.
-    Im zweiten Teil gehen wir auf die Details der Umsetzung ein, die sich in zwei Teile gliedern: die Client App auf dem mobilen Endegerät und das Backend zum speichern der Daten.
+    Wir geben vorab eine Gesamtübersicht über alle Teilaspekte des Projekts und schaffen den Kontext zum Gesamtprojekt.S
+    Im zweiten Teil gehen wir auf die Details der Umsetzung ein, die sich in zwei Teile gliedern: die Client App auf dem mobilen Endegerät und das Backend zum Speichern der Daten.
     Der letzte Teil befasst sich mit der Evaluation der Anwendung und der Frage, ob durch die neue LiDAR-Technologie ein Mehrwehrt in der User-Experience generiert werden kann.
   \end{abstract}
 
@@ -90,7 +91,7 @@
       Bilder und Videos an einem zentralen Ort zu speichern und mit anderen Studierenden zu teilen.
 
       Das zweite Ziel des Projektes ist es eine Augmented Reality App zu entwickeln, welche es ermöglicht besagte mediale Inhalte in einem Raum zu platzieren und jederzeit dort wieder abrufbar zu machen.
-      Dabei soll die Position der Inhalte für jeden Nutzer exakt die gleiche sein, wodurch die soziale Interaktion zwischen Usern angetrieben werden soll.
+      Dabei soll die Position der Inhalte für jeden Nutzer exakt die Gleiche sein, wodurch die soziale Interaktion zwischen Usern angetrieben werden soll.
       Die AR App soll ohne einen großen organisatorischen Aufwand für alle Nutzergruppen zu bedienen sein, das heißt, dass das Tracking möglichst ohne externe Maker und Aufbauten auskommen muss.
 
     \subsection{Zielgruppen}
@@ -137,31 +138,54 @@
     \subsection{Stand der Forschung}
     % Welche Literatur liegt dem Projekt zugrunde, bzw. welche anderen Produkte/Projekte? Inwiefern grenzt sich unser Projekt von diesen ab?
 
-    --> Hier kommt noch ein wenig related work hin. Recherche!
+      Weil die Technologie der Augemented Reality schon seit einiger Zeit existiert, haben sich bereits Forscher und kommerzielle Vorhaben dieser Thematik gewidmet,
+      um die Anwendung von AR auch in Ausstellungskontexten zu untersuchen.
+
+      Eins der älteren Paper ist von Narumi et. al.\cite{narumi2011digital}, die mittels AR Dioramen mit virtuellen Content überlagert haben.
+      Entgegen unserem Ansatz findet das allerdings als Projektionsüberlagerung statt.
+
+      Okada et. al. haben Mobile Devies genutzt, um Bilder vergangener Tage im Rahmen einer Ausstellung im öffentlichen Raum auf Oberflächen darzustellen\cite{okada2015manseibashi}.
+      Weil das Projekt bereits vor 5 Jahren umgesetzt wurde, konnte hier noch keine LiDaR Technologie eingesetzt werden. 
+      Auch wurde hier die soziale Akzeptanz einer solchen Ausstellung untersucht. Wir haben andere Schwerpunkte gesetzt.
+
+      Fuguo und Jing haben 2017 untersucht, wie man Ausstellungen mithilfe des Vuforia AR-Frameworks mit digitalen Inhalten anreichern kann\cite{peng2017mobile}. Durch große Fortschritte
+      im Bereich der Tracking Technologien wird ein Tracking des realen Raumes durch Bildmarker - wie im damaligen Vuforia Framework - obsolet.
+
+      Es ist allgemein zu beobachten, dass sich im Zeitraum 2015-2018 zahllose Forschungsarbeiten mit der Technologie der Augmented Reality auseinandergesetzt haben,
+      um deren Einsatz im Ausstellungskontext zu untersuchen. Bei diesen Arbeiten liegt der Fokus mehr auf der Untersuchung des Mediums als solches. Wir grenzen uns insofern ab,
+      als das bei uns der Content im Vordergrund steht. Wie kann man Content zentral speichern und verwalten und wie man für mehrere Nutzer ein konsistentes Erlebnis 
+      erreichen kann.
+
+      \pagebreak
 
     \subsection{Content-Management-System}
 
-      Unser CMS ist eine Kombination aus sowohl einem Frontend für bspw. Upload von Content, Betrachten des zur Verfügung stehenden Contents und Pflege von Szenen und Metadaten 
-      als auch einem Backend, was die Daten im Hintergrund speichert und verwaltet bzw. auf Abfrage zur Verfügung stellt. Je nach Umfang und Struktur des Projekts spricht man ggfs. auch 
+      Unser CMS ist einerseits Kombination aus einem Frontend für bspw. Upload von Content, Betrachten des zur Verfügung stehenden Contents und Pflege von Szenen und Metadaten 
+      und andererseits einem Backend, was die Daten im Hintergrund speichert, verwaltet und auf Abfrage zur Verfügung stellt. Je nach Umfang und Struktur des Projekts spricht man ggfs. auch 
       von der sog. \textit{Middleware}. Dieser Begriff ist häufig sehr abstrakt definiert und wobei die Grenze zwischen Frontend und Middleware recht eindeutig ist,
       ist sie zwischen Middleware und Backend sehr viel schwieriger zu ziehen. In unserem Fall ist die Middleware zum Zwecke der Einfachheit in das Backend integriert.
 
       Ferner ist es abhängig von der Größe des Projekts durchaus üblich da Frontend und Backend in getrennten autonomen Einheiten zu entwickeln. 
-      Bei großen Enterprise-Projekten ist das sogar die Regeln, weil es CICD\footnote{Continuous Integration/Continous Delivery} stark vereinfacht.
-      Dabei kommunizieren Front- und Backend über eine definierte Schnittstelle (z.b. ein JSON\footnote{JavaScript Object Notation}-Feed).
-      Teams können an den jeweiligen Problem ihrer Domäne arbeiten ohne Rücksicht auf andere Komponenten nehmen zu müssen.
+      Bei großen Enterprise-Projekten ist das sogar die Regel, weil es CICD\footnote{Continuous Integration/Continous Delivery} stark vereinfacht.
+      Dabei kommunizieren Front- und Backend über eine definierte Schnittstelle (z.b. einen JSON\footnote{JavaScript Object Notation}-Feed).
+      Teams können an den jeweiligen Problemen ihrer Domäne arbeiten ohne Rücksicht auf andere Komponenten nehmen zu müssen.
 
       In unserem CMS sind aufgrund des begrenzten Umfangs alle Komponenten in einem Projekt integriert. 
       Die Vorteile der schnellen Entwicklung und der einfacheren Integration überwiegen an dieser Stelle.
 
       \subsubsection{Model-View-Controller Pattern}
 
-        Programmiert ist die Plattform in C\# mittels des Frameworks ASP.NET Core 3.1. Das ist die aktuelle LTS-Version vom OpenSource-Framework.
+        Programmiert ist die Plattform in C\# mittels des Frameworks ASP.NET Core 3.1. Das ist die aktuelle LTS-Version\footnote{Long Term Support} vom OpenSource-Framework.
         ASP.NET Core ermöglicht es, eine Plattform zum allergrößten Teil in C\# zu entwickeln und die bekannten und bewährten Tools aus dem .NET Ökosystem und NuGet-Packages zu verwenden.
-        Dabei verwendet es das MVC-Pattern\footnote{Model View Controller}. Dieses Design-Pattern trennt die funktionalitäten der Datenstruktur \textit{Model-Komponnte}, Präsentation \textit{View}
-        und Businesslogik \textit{Controller} voneinander. Der Code ist dadurch leichter verständlich, wartbarer und weniger fehleranfällig. Schematisch sieht das folgendermaßen aus:
+        Dabei verwendet es das MVC-Pattern\footnote{Model View Controller}. Dieses Design-Pattern trennt die Funktionalitäten der Datenstrukturen ()\textit{Model}), Präsentation ()\textit{View})
+        und Businesslogik ()\textit{Controller}) voneinander. Der Code ist dadurch leichter verständlich, wartbarer und weniger fehleranfällig. Schematisch sieht das folgendermaßen aus:
 
-        [Put here some nice picture about MVC-Pattern]
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=.8\textwidth]{MVC.png}
+          \caption{Model-View-Controller Pattern}
+          \label{MVC}
+        \end{figure}
         
         Die \textit{View}-Komponenten zur visuellen Präsentation, welche normalerweise durch HTML-Code dargestellt werden, bestehen bei ASP.Net Core aus sog. Razor-Pages.
         Das sind HTML-Dokumente, welche mittels stark typisierter Modelle eine klar definiterte Schnittstelle - die \textit{Model-Komponente} - mit dem jeweiligen Controller interagieren.
@@ -172,7 +196,7 @@
 
         \textit{Controller} stellen die Businesslogik der Anwendung bereit. Das ist die Kommunikation mit dem Datenbank-Provider, Dateisystemzugriff oder die Verarbeitung von eingegeben Daten.
         Mittels Dependency-Injection können in jedem Controller zentral verwaltete Services nach Bedarf zur Verfügung gestellt werden. Das macht den Code vom Contoller leicht lesbar, selbst dokumentierend
-        und frei von Boilerplate-Code.
+        und reduziert ebenfalls Boilerplate-Code.
 
       \subsubsection{Frontend}
 
@@ -180,7 +204,7 @@
 
         \paragraph{Übersich der Funktionalität}
 
-          Der übergeordnete Zweck des CMS ist - wie bereits erwähnt - die Bereitstellung und Verwaltund des Contents für die Client App. Dafür gibt es die folgenden Einzelbestandteile:
+          Der übergeordnete Zweck des CMS ist die Bereitstellung und Verwaltung des Contents für die Client App. Dafür gibt es die folgenden Einzelbestandteile:
 
           \begin{itemize}
             \item \textit{About}-Page mit Informationen zum Projekt
@@ -190,11 +214,11 @@
             \item \textit{Project-Pages} welche nur über einen generierten QR-Code erreichbar sind
           \end{itemize}
           
-          Zur einheitlichen Einbettung dieser einzelnen Sektionen verwenden wir sog. Razor-Pages.
+          Zur einheitlichen Einbettung dieser einzelnen Sektionen verwenden wir die Razor-Pages.
 
         \paragraph{Razor-Pages}
 
-        Die zuvor erwähnte \textit{View}-Komponente wird mittels *.cshtml programiert. Das ist html-code, der durch interoperabilität mit C\#-Modell Klassen augmentiert wurde.
+        Die zuvor erwähnte \textit{View}-Komponente wird mittels *.cshtml programiert. Das ist html-code, der durch Interoperabilität mit C\#-Modell Klassen augmentiert wurde.
         Das sieht z.B. so aus:
 
         \begin{lstlisting}          
@@ -230,9 +254,9 @@
         \paragraph{ViewData} welche die Schnittstelle zu einem definierten \textit{ViewBag} innerhalb der C\#-Welt darstellen. Dadurch können Dropdown-Menüs o.ä. befüllt werden.
         Diese Komponenten werden durch ein vorangestelltes @-Symbol gekennzeichnet.
 
-        \paragraph{HTML-Tags} welche wie bei gewöhnlichem HTML funktionieren. Sie reagieren auf Javascript und CSS wie gewöhnliche HTML5 Komponenten.
+        \paragraph{HTML-Tags} welche wie bei gewöhnlichem HTML funktionieren. Sie reagieren auf Javascript und CSS wie bei anderen Webpages.
 
-        \paragraph{ASP-Komponenten} werden innerhalb des *.cshtml Dokuments mit dem \textit{ASP}-Präfix gekennzeichnet. Diese elemente werden z.B. bei einem Formular in den Konstruktur
+        \paragraph{ASP-Komponenten} werden innerhalb des *.cshtml Dokuments mit dem \textit{ASP}-Präfix gekennzeichnet. Diese elemente werden z.B. bei einem Formular in den Konstruktor
         des Datenmodells übergeben oder rufen bestimme Aktionen innerhalb des Controllers aus.
         
         \paragraph{Model Viewer}
@@ -241,23 +265,38 @@
           Dazu verwenden wir den \textit{Google Model Viewer}\cite{ModelViewer:online}. Das ist eine kleine Javascript-Library, welches die Darstellung im Browser des Benutzers übernimmt.
           Man übergibt lediglich einen Link zum Model und je nach den Fähigkeiten des Endgeräts sind verschiedene Darstellungsarten möglich:
 
-          [put here screenshots of AR, Model only and Desktop]
-          [Create references to BU]
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=.3\textwidth]{IMG_5810.PNG}
+            \includegraphics[width=.3\textwidth]{IMG_5811.PNG}
+            \includegraphics[width=.3\textwidth]{mv.PNG}
+            \caption{Verschiedene Model-Viewer Ansichten}
+            \label{ModelViewer}
+          \end{figure}
 
           Im AR-Modus wird das Modell vom ModelViewer in der Umgebung positioniert und kann von allen Seiten betrachtet werden [1]. 
           In der Model-Only Ansicht [2] kann der Benutzer das Modell ohne die Umgebung betrachten.
           Die Desktop-Ansicht erlaubt es, mittels der Maus das Modell von allen Seiten zu betrachten.
 
-          Ferner wird beim Upload mittels des Model-Viewers der Thumbnail\textit{kleines Vorschaubild in Übersichten} vom User festgelegt:
+          Ferner wird beim Upload mittels des Model-Viewers der Thumbnail\footnote{kleines Vorschaubild in Übersichten} vom User festgelegt:
+          
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=.6\textwidth]{UploadForm.PNG}
+            \caption{Upload Formular}
+            \label{createThumb}
+          \end{figure}
 
-          [Screenshot of upload form with Thumbnail]        
+        \paragraph{Darstellung auf iOS Geräten}
 
-          \textbf{Verweis auf die GLTF/USDZ Problematik?}
+          Das Dateiformat, was wir in unserer Client-App verwenden (siehe \ref{3DModel}) ist nicht kompatibel der Implementierung des ModelViewers auf iOS Geräten.
+          Deswegen müssen wir für das Funktionieren dieses Features noch eine Konvertierung des 3D-Modells in das sog. \textit{USDZ}-Format\footnote{Ein proprietäres Format von Appel und Pixar} vornehmen.
+          Dafür haben wir in unserer Service-Architektur einen Service im Hintergrund laufen, der sich automatisch darum kümmert.
 
       \subsubsection{Backend}
 
-        Das Backend ist eine abstrakte Bezeichnung für alle Komponenten, die daran beteiligt sind ein definiertes Verhalten oder eine Funktionalität bereit zu stellen. 
-        In unserem CMS übernimmt das Backen die folgenden Aufgaben:
+        Das Backend stellt alle Services bereit, die vom Frontend oder der API angefordert werden. Im Frontend selbst ist keine Logik enthalten. 
+        In unserem CMS übernimmt das Backend die folgenden Aufgaben:
 
         \begin{itemize}
           \item Kommunikation mit der Datenbank
@@ -268,11 +307,11 @@
           \item Hintergrundprozess zur Konvertierung in USDZ-Dateien
         \end{itemize}
 
-        Herauszuheben sind dabei die beiden Komponenten \textit{Content API} und \textit{Dateiverwaltung} und \textbf{USDZ Konverter hier?}. 
-        Eine ausführlichere Erläuterung der Datenbankinterkation folgt im nächsten Kapitel,
+        Herauszuheben sind dabei die beiden Komponenten \textit{Content API} und \textit{Dateiverwaltung}. 
+        Eine ausführlichere Erläuterung der Datenbankinteraktion folgt im nächsten Kapitel.
 
         \paragraph{Content API} ist unsere Schnittstelle zur Client App. Dafür wird mittels eines einfachen Aufrufs über eine definierte URL\footnote{https://cms.hotpot.codes/api/content}
-        im CMS ein JSON-String erzeugt, der alle notwendigen Informationen und Links zum runterladen der einzelnen Modelle liefert. Ein kleiner Ausschnit sieht z.B. so aus:
+        im CMS ein JSON-String erzeugt, der alle notwendigen Informationen und Links zum Herunterladen der einzelnen Modelle liefert. Ein kleiner Ausschnit sähe z.B. so aus:
 
         \begin{lstlisting}          
           {
@@ -316,9 +355,9 @@
             ...
         \end{lstlisting}    
         
-        Dieser JSON-String wird auf Anfrage generiert. Die Links zum Runterladen zeigen auf die Dateien im Dateisystem und können direkt von dort heruntergeladen werden.
+        Dieser JSON-String wird auf Anfrage generiert. Die Links zum Herunterladen zeigen auf die Dateien im Dateisystem und können direkt von dort bezogen werden.
 
-        Ferner können durch spezielle Abfragen aus der Client APP heraus bestimmte Objekte die Szenen oder Anchor gelöscht werden. 
+        Ferner können durch spezielle Abfragen aus der Client APP heraus bestimmte Objekte wie Szenen oder Anchors gelöscht werden. 
         Für jede Aufgabe gibt es einen definierten API-Endpoint\footnote{Der Endpoint ist eine definierte URL, über die eine gewünschte Funktionalität erreichbar ist}.
 
         \paragraph{Dateiverwaltung} ist wichtig für das CMS, weil dadurch die Inhalte vom Host - dem eigentlichen Stück Hardware auf dem das CMS läuft - bereitgestellt werden.
@@ -327,8 +366,8 @@
         vom Host System immer auf die gleiche Weise. Dadurch lässt sich fehlerfreies und konsistentes Verhalten erreichen.
 
         Besonderes Augenmerk muss bei der Speicherung und Verwaltung der Inhalte auf Dateinamen gelegt werden. Dadurch werden Konflikte bei Dateinamen vermieden und es kann
-        davon ausgegangen werden, dass jeder Dateiname einmalig ist. Das lässt sich zwar auch erreichen, in dem man jeder Datei einen Zeitstempel und beliebiges Präfix zuweist.
-        Effizienter und einfacher verständlich ist es mithilfe des Dateinamens und einem Zeitstempel eine UUID zu generieren, unter der die Datei gespeichert wird.
+        davon ausgegangen werden, dass jeder Dateiname einmalig ist. Das lässt sich zwar auch erreichen, indem man jeder Datei einen Zeitstempel und beliebiges Präfix zuweist.
+        Effizienter und einfacher verständlich ist es aber mithilfe des Dateinamens und einem Zeitstempel einen UUID\footnote{Universally Unique Identifier} zu generieren, unter dem die Datei gespeichert wird.
         Das hat ferner den Vorteil, dass die Dateien auf dem Dateisystem anonymisiert werden. Diese UUID wird schließlich in der JSON-Api als \textit{AssetFilename} ausgegeben.       
 
       \subsubsection{Aufbau der Datenbank}
@@ -347,17 +386,30 @@
         also Sammlungen von Dokumenten gespeichert werden. Dabei müssen nicht alle Dokumente zwangsläufig eine identische Struktur haben.
         Der Vorteil dieser Dokumentenbasierten Speicherung ist, dass sich einzelne Dokumente durchaus unterscheiden können, sofern sie über gemeinsame Pararmeter abgefragt werden können.
 
-        [Graphic about MongoDB schema]
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=.8\textwidth]{MongoDB.PNG}
+          \caption{MongoDB Collections}
+          \label{MongoCollection}
+        \end{figure}
 
-        Der große Vorteil des MVC-Patterns ist die starke typisierung der Modelle, was eine Interaktion mit einer MongoDB stark vereinfacht.
+        Das hier sind alle Collections innerhalb unserer Datenbank. Jede dieser Collections speichert ein anderes Datenmodell. Im nachfolgenden Bild ist zum Beispiel die Collection für alle Assets zu sehen.
+        Viele dieser Daten finden sich später im JSON-String wieder, der durch die API-Abfrage weiter oben generiert wird:
+
+        \begin{figure}[h]
+          \centering
+          \includegraphics[width=.8\textwidth]{MongoAssets.PNG}
+          \caption{MongoDB Asset Collection}
+          \label{MongoAssets}
+        \end{figure}
+
+        Der große Vorteil des MVC-Patterns ist die starke Typisierung der Modelle, was eine Interaktion mit einer MongoDB stark vereinfacht.
         Die Anwendung kann bei der Verwendung eines vordefinierten Datenmodells immer darauf vertrauen, dass die Datenbank immer die geforderten Daten zurück liefert 
         und muss nichts parsen bzw. sanity checks der abgefragten Daten vornehmen.
-
-        [Database Schema]
         
-        Anders als unser CMS, was wir komplett selbst programmiert haben, wird das Datenbankbackend einfach mittels eines sog. \textit{Service-Providers} eingebunden
+        Anders als unser CMS, was wir komplett selbst programmiert haben, wird der Datenbankservice einfach mittels eines sog. \textit{Service-Providers} eingebunden
         und steht dann mittels Dependency-Injection dem entsprechenden Controller zur Verfügung. Dieser Service-Provider wird zum Start der Serveranwendung einmalig 
-        konfiguriert und steht dann als Singleton\footnote{Einzige Instanz einer Klasse, die global erreichbar ist} zur Verfügung. Die Datenbank selbst ist ein Docker-Container,
+        konfiguriert und steht ist dann zur Laufzeit als Singleton\footnote{Einzige Instanz einer Klasse, die global erreichbar ist} erreichbar. Die Datenbank selbst ist ein Docker-Container,
         der parallel läuft und als Prozess unabhängig vom CMS ist. Der nachfolgende Code ist die Startup klasse, die alle Services definiert:
 
         \begin{lstlisting}          
@@ -386,7 +438,7 @@
           die problemlos geändert werden konnten. Ein Problem ist allerdings, dass SQL-Datenbanken genau diese Struktur auch auf Tabellenebene wiederspiegeln müssen.
           Daher muss auch jedes mal bei einer Änderung der Datenstruktur die Klasse, die mit der Datenbank interagiert - der sog. Model-Builder - neu geschrieben werden.
           
-          Ein weiteres Problem ist \textit{Class-Table Inheritance}. Aus Objektorientierten Programmiersprachen kennt man das Prinzip der Vererbung. 
+          Ein weiteres Problem ist \textit{Class-Table Inheritance}. Aus objektorientierten Programmiersprachen kennt man das Prinzip der Vererbung. 
           Hierbei können Basisklassen definiert werden, wie z.B. ein \textit{Asset}. Von dieser Basisklasse können dann wiederum weitere Klassen abgeleitet werden, 
           wie \textit{Modell} oder \textit{Video}. Diese Beziehung ist in SQL nur über Umwege über die Class-Table Inheritance möglich und stellt eher einen Workaround dar.
 
@@ -396,28 +448,34 @@
 
       \subsubsection{Development und Integration Workflow}
 
-        Wir haben von vornherein darauf wert gelegt, dass wir einen Workflow implementieren, der paralleles Arbeiten an den Komponenten ermöglicht.
+        Wir haben von vornherein darauf Wert gelegt, dass wir einen Workflow implementieren, der paralleles Arbeiten an den Komponenten ermöglicht.
         Speziell im späteren Verlauf des Projektes war es wichtig, dass der App ständig eine Datenbank zur Verfügung stand, während andererseits an dieser Datenbank entwickelt wurde.
         Die Lösungen, die wir dafür in unseren Workflow implementiert haben sind State-Of-The-Art und bilden bereits im kleinen Maßstab die Arbeitsweise von großen Firmen
-        ab, wo teilweise hunderte Entwickler an einer gemeinsamen Codebasis arbeiten. Das Gleiche gilt auf für das Deployment der Anwendung.
+        ab, wo teilweise hunderte Entwickler an einer gemeinsamen Codebasis arbeiten. Das Gleiche gilt auch für das Deployment\footnote{Eine Anwendung auf einem Server starten und öffentlich erreichbar machen} 
+        der Anwendung.
 
-        Wenngleich unser Workflow aufgrund der Teamgröße weniger Bürokratisch ist.
+        Aufgrund unserer Teamgröße ist der Workflow jedoch wesentlich weniger bürokraktisch hinsichtlich Freigaben, Code Reviews und Unit Tests.
 
         \paragraph{Versionsverwaltung mit Git}
 
           Wir haben bei unserer Entwicklung stark auf Github als unser VCS\footnote{Version Control System} gesetzt. Das Vorgehen hier ist wie folgt:
 
           \begin{itemize}
-            \item Entwickler A schreibt code für ein neues Feature auf einem sog. Feature-Branch
-            \item Entwickler A \textit{commited} diesen Code in ein Repository
-            \item Ist das Feature \textit{Production-Ready} wird mittels eines Pull-Request der Code in den Master-Branch integriert
-            \item Entwickler B kann sich nun den aktuellen Code aus dem Master-Branch in seinen eigenen Feature-Branch integrieren
+            \item Entwickler A schreibt Code für ein neues Feature auf einem sog. Feature-Branch
+            \item Entwickler A \textit{commited} diesen Code in das Repository
+            \item Ist das Feature \textit{Production-Ready} wird mittels eines Pull-Requests der Code in den Master-Branch integriert
+            \item Entwickler B kann sich nun den aktuellen Code aus dem Master-Branch in seinen eigenen Feature-Branch integrieren und arbeitet direkt mit dem aktuellsten Stand weiter.
           \end{itemize}
 
           Durch diese Arbeitsweise werden später Konflikte vermieden, wenn mehrere Entwickler parallel am gleichen Projekt arbeiten.
           Alle Entwickler arbeiten in ihrer Entwicklung in ihrem eigenen Feature-Branch, der bei Fertigstellung in den Master-Branch einfliesst.
 
-          [Put here screenshot]
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=.8\textwidth]{gitBranches.PNG}
+            \caption{Netzwerk mehrerer Branches}
+            \label{GitNetworks}
+          \end{figure}
           
           Dabei können vor der Genehmigung von Pull-Requests auch Code-Reviews durchgeführt werden, um die Qualität des Codes zu evaluieren,
           bevor er in Produktion geht.
@@ -430,7 +488,7 @@
 
         \paragraph{Docker}
 
-          Wie bereits im vorigen Kapitel erwähnt, ist Docker eine Lösung, um Anwendungen in kleine und schlanke Container zu isolieren, um sie auf einem System mit beliebigem 
+          Wie bereits erwähnt, ist Docker eine Lösung, um Anwendungen in kleine und schlanke Container zu isolieren, um sie auf einem System mit beliebigem 
           Betriebssystem auszuführen. Diese Container lassen sich mittels sog. \textit{Environment Variables} nach Bedarf schnell für eine bestimmte Umgebung konfigurieren.
           Das kann z.B. beinhalten:
 
@@ -525,11 +583,18 @@
           im gleichen Verzeichnis und werden von Docker beim Start ausgelesen. Ferner werden für jeden Container definierte Namen zugewiesen. Weil solch ein Compose-File immer alle Services startet,
           können funktional zusammenhängende Services in diesen Dateien gemeinsam konfiguriert werden.
 
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=.8\textwidth]{DCompose.png}
+            \caption{Docker Container Orchestrierung}
+            \label{pipeline}
+          \end{figure}
+
         \paragraph{Deployment}        
 
-          Die Fäden laufen zusammen bei sog. \textit{Github Actions}. Das sind Programme, die auf dem Repostory ausgeführt werden, wenn bestimmte Bedingungen erfüllt sind.
-          In unserem Konkreten Fall werden diese getriggert, wenn Code in den Master-Branch eingefügt wird. Diese Actions bauen dann das Docker-Image und laden es auf unsere interne
-          Docker-Registry hoch. Der in der docker-compose ausgeführte \textit{Watchtower} prüft in regelmäßigen Abständen, ob sich das Docker-Image geändert hat und triggert in diesem Fall
+          Die Fäden laufen zusammen bei sog. \textit{Github Actions}. Das sind Programme, die auf dem Repository ausgeführt werden, wenn bestimmte Bedingungen erfüllt sind.
+          In unserem konkreten Fall werden diese getriggert, wenn Code in den Master-Branch eingefügt wird. Diese Actions bauen dann das Docker-Image und laden es auf unsere interne
+          Docker-Registry hoch. Der in der Docker-Compose ausgeführte \textit{Watchtower} prüft in regelmäßigen Abständen, ob sich das Docker-Image geändert hat und triggert in diesem Fall
           den Deployment-Prozess. Dazu wird das neue Image heruntergeladen, der jeweilige Container \textit{gracefully}\footnote{Eingehende Client-Verbindungen und Schreibprozesse werden kontrolliert beendet.} 
           beendet und anschließend mit dem neuen Image wieder gestartet. Da im Idealfall keine Anpassung der Konfiguration notwendig ist, kann dieser Prozess komplett automatisiert erfolgen.
           Der jeweilige Verantwortliche macht nur den Pull-Request auf den Master Branch und alle weiteren Schritte erfolgen dann automatisch und nach wenigen Minuten ist das neue Release veröffentlicht.
@@ -537,7 +602,12 @@
           Das bietet einen standardisierten Workflow, der effizient und weniger fehleranfällig ist als die klassische Methode, wo ein Administrator eine neue Version in den Systemkontext einbetten und
           dann starten musste. Moderne Tools wie \textit{Puppet} oder \textit{Chef} machen das zwar ebenfalls einfacher aber eine Container-Lösung ist diesem Vorgehen in vielerlei Hinsicht überlegen.
 
-          [Put here Image of Development and Deployment Cycle from Presentation]
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=.8\textwidth]{pipeline.png}
+            \caption{Development Workflow}
+            \label{pipeline}
+          \end{figure}
 
         \paragraph{Test vs. Production}
 
@@ -546,13 +616,13 @@
           Daher sind wir relativ frühzeitig auf ein zweigleisiges Modell umgestiegen, wo es einen Development- und einen Production-Server gibt. 
           Ersterer konnte vom Entwickler bei Bedarf das neue Image starten und ermöglichte Debugging und Testen ohne die Entwicklung der App zu beeinträchtigen.
           War die implementierung des neuen Features \textit{Production Ready}, konnte der Deployment-Prozess gestartet werden und der neue Code wurde dann auf dem Production
-          Server deployed. Außerdem werden an einen Productionserver ganz andere Anforderungen hinsichtlich Netzwerkbandbreite, Verfügbarkeit und Performance gelegt.
+          Server deployed. Außerdem werden an einen Produktionserver ganz andere Anforderungen hinsichtlich Netzwerkbandbreite, Verfügbarkeit und Performance gelegt.
           Dieser muss im Zweifelsfall eine große Menge User bedienen können. Der Development Server hat nur schlimmstenfalls nur einige wenige User und wird nur von den Entwicklern verwendet.
           Das ist neben der bereits erwähnten Verfügbarkeit für die App Entwicklung auch kosteneffizienter, weil spezialisierte Maschinen verwendet werden können.
 
     \subsection{AR App}
 
-    \subsubsection{Verwendung von 3D-Modellen}
+    \subsubsection{Verwendung von 3D-Modellen}\label{3DModels}
     
     Da die Platzierung von 3D-Modellen ein Hauptbestandteil der App ist, wurde ein großer Fokus auf das Dateiformat der 3D-Modelle gelegt. Die dynamische Verwendung der Modelle in der App sollte möglichst einfach und problemlos sein.\\ 
     Aus diesem Grund wurden die verschiedenen von Unity unterstützten Dateiformate miteinander verglichen, um die im Dateiformat unterstützten Funktionalitäten und die Qualität der Darstellung in der App zu vergleichen.\\
