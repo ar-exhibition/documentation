@@ -106,6 +106,49 @@
       Museen und Ausstellungen können durch die App ihr Repertoire an Kunst und Objekten erweitern, da virtuelle Bilder und Objekte einfach ausgestellt werden können. 
       Die Inhalte können genau wie vom Kurator gewollt platziert werden und erscheinen dem Besucher in der gewollten Position, Rotation und Größe.
 
+
+      \section{Projekt Management}
+
+      Durch die Größe dieses Projektes und die Anzahl der Projektteilnehmer ist wichtig ein effizientes Projekt Management durchzusetzen.
+      Mit dem Projekt Management soll erreicht werden, dass der Projektstand konstant überwacht werden kann und frühzeitig Anpassungen vorgenommen werden können, um Präsentationstermine halten zu können.
+      
+      Unser Projekt Management besteht aus drei Teilen:
+    
+    \paragraph{Allgemeine Kommunikation}
+      Durch die aktuelle Corona Situation, war es uns nicht möglich sich persönlich zu treffen.
+      Die gesammte Kommunikation musste online stattfinden.
+      Wir haben \textit{Microsoft Teams} genutzt, um Besprechungen durchzuführen.
+      Zweimal in der Woche haben wir uns virtuell getroffen, um Ergebnisse zu präsentieren, aktuelle Probleme zu besprechen und neue Arbeitspakte festzulegen.
+    
+    \paragraph{Aufgaben Management}
+      Für die Verwaltung der Aufgaben haben wir \textit{Trello} genutzt.
+      Dieses Tool folgt dem Kanban-Prinzip und ermöglicht es Arbeitspakete durch verschiedene Prozessstufen (Spalten) laufen zu lassen.
+      Wir haben mit 4 Spalten gearbeitet. Als erstes haben wir die \textit{Backlog} Spalte, wo alle Ideen und Aufgaben gesammelt werden.
+      Bei Besprechungen wird festgelegt, welche Aufgaben als nächstes bearbeitet werden sollen. Diese Aufgabenpakete werden in die Prozessstufe \textit{Todo} verschoben.
+      Dort wird die Aufgabe einem Teammitglied zugeordnet, der diese Aufgabe als nächstes bearbeiten kann.
+      Wenn das Teammitglied mit dieser Aufgabe beginnt wird sie in \textit{Doing} verschoben.
+      Nach Abschluss der Aufgabe wird sie in \textit{Done} abgelegt.
+      So hat man einen Überblick über den Status aller Aufgaben und weiß genau, wer gerade an welche Aufgabe arbeitet.
+    
+    \paragraph{Versionsverwaltung}
+      Da alle Teammitglieder gleichzeit an dem Code arbeiten, muss es eine verlässliche Versionsverwaltung geben.
+      Wir haben dafür \textit{git} genutzt. Unsere drei Arbeitsfelder \textit{CMS}, \textit{App} und \textit{Dokumentation} haben jeweils ihr eigenes Repository.
+      Damit dieses Repositories zwischen den Teammitgliedern synchronisiert werden können, haben wir sie auf \textit{GitHub} gehostet.
+      Dort sind unsere Repositories unter der Organisation \textit{AR Exhibition} zusammengefasst.
+
+      Um gleichzeitig an bestimmten Features zu arbeiten, gibt es verschiedene \textit{Branches}, die einen unterschiedlichen Entwicklungsstand haben.
+      In der \textit{master} Branch findet man den aktuellen veröffentlichten Stand, dieser Entwicklungszustand spiegelt das CMS unter \url{https://cms.hotpot.codes}
+      und die aktuelle Testflight\footnote{Ein Programm für iOS-Geräte, das es ermöglicht Beta-Versionen von Apps zu laden.} Version der App wider.
+      Des Weiteren gibt es die \text{development} Branch, die den aktuellen unveröffentlichten Entwickungsstand abbildet.
+      In regelmäßigen abständen wird der \textit{development} Stand in die \textit{master} Branch eingepflegt und veröffentlicht.
+
+      Wenn nun neue Funktionen entwickelt werden, wird eine neue Feature-Branch erstellt, diese leitet sich von \textit{development} ab.
+      Nachdem die Funktionen entwicklet wurde, wird ein \textit{Pull Request} in GitHub auf die \textit{development} Branch angefragt.
+      Nun muss mindestens ein weiteres Teammitglied diesen \textit{Pull Request} überprüfen (Review), bevor ein \textit{merge} sattfinden kann.
+      Durch diese gegenseitige Kontrolle bleibt jeder mit dem Code vertraut und es können Fehler frühzeitig erkannt werden.
+      Dies führt zu einer konstant guten Code Qualität und verhindert Regression.
+
+
   \section{Technische Umsetzung}
   % Wie funktioniert die App, bzw. das CMS? Welche Software/Hardware Einheiten werden verwendet?
   Das Projekt besteht im Wesentlichen aus zwei Komponenten: 
@@ -937,47 +980,6 @@
 
         Durch die Kommentare der Nutzer und den Beobachtungen während der Nutzung konnten wir das User Interface der App deutlich verbessern und so die Nutzerzufriedenheit steigern. Die überarbeitete Version der App wurde bei späteren Demonstrationen intuitiver und besser angenommen.
       
-      \section{Projekt Management}
-
-        Durch die Größe dieses Projektes und die Anzahl der Projektteilnehmer ist wichtig ein effizientes Projekt Management durchzusetzen.
-        Mit dem Projekt Management soll erreicht werden, dass der Projektstand konstant überwacht werden kann und frühzeitig Anpassungen vorgenommen werden können, um Präsentationstermine halten zu können.
-        
-        Unser Projekt Management besteht aus drei Teilen:
-      
-      \paragraph{Allgemeine Kommunikation}
-        Durch die aktuelle Corona Situation, war es uns nicht möglich sich persönlich zu treffen.
-        Die gesammte Kommunikation musste online stattfinden.
-        Wir haben \textit{Microsoft Teams} genutzt, um Besprechungen durchzuführen.
-        Zweimal in der Woche haben wir uns virtuell getroffen, um Ergebnisse zu präsentieren, aktuelle Probleme zu besprechen und neue Arbeitspakte festzulegen.
-      
-      \paragraph{Aufgaben Management}
-        Für die Verwaltung der Aufgaben haben wir \textit{Trello} genutzt.
-        Dieses Tool folgt dem Kanban-Prinzip und ermöglicht es Arbeitspakete durch verschiedene Prozessstufen (Spalten) laufen zu lassen.
-        Wir haben mit 4 Spalten gearbeitet. Als erstes haben wir die \textit{Backlog} Spalte, wo alle Ideen und Aufgaben gesammelt werden.
-        Bei Besprechungen wird festgelegt, welche Aufgaben als nächstes bearbeitet werden sollen. Diese Aufgabenpakete werden in die Prozessstufe \textit{Todo} verschoben.
-        Dort wird die Aufgabe einem Teammitglied zugeordnet, der diese Aufgabe als nächstes bearbeiten kann.
-        Wenn das Teammitglied mit dieser Aufgabe beginnt wird sie in \textit{Doing} verschoben.
-        Nach Abschluss der Aufgabe wird sie in \textit{Done} abgelegt.
-        So hat man einen Überblick über den Status aller Aufgaben und weiß genau, wer gerade an welche Aufgabe arbeitet.
-      
-      \paragraph{Versionsverwaltung}
-        Da alle Teammitglieder gleichzeit an dem Code arbeiten, muss es eine verlässliche Versionsverwaltung geben.
-        Wir haben dafür \textit{git} genutzt. Unsere drei Arbeitsfelder \textit{CMS}, \textit{App} und \textit{Dokumentation} haben jeweils ihr eigenes Repository.
-        Damit dieses Repositories zwischen den Teammitgliedern synchronisiert werden können, haben wir sie auf \textit{GitHub} gehostet.
-        Dort sind unsere Repositories unter der Organisation \textit{AR Exhibition} zusammengefasst.
-
-        Um gleichzeitig an bestimmten Features zu arbeiten, gibt es verschiedene \textit{Branches}, die einen unterschiedlichen Entwicklungsstand haben.
-        In der \textit{master} Branch findet man den aktuellen veröffentlichten Stand, dieser Entwicklungszustand spiegelt das CMS unter \url{https://cms.hotpot.codes}
-        und die aktuelle Testflight\footnote{Ein Programm für iOS-Geräte, das es ermöglicht Beta-Versionen von Apps zu laden.} Version der App wider.
-        Des Weiteren gibt es die \text{development} Branch, die den aktuellen unveröffentlichten Entwickungsstand abbildet.
-        In regelmäßigen abständen wird der \textit{development} Stand in die \textit{master} Branch eingepflegt und veröffentlicht.
-
-        Wenn nun neue Funktionen entwickelt werden, wird eine neue Feature-Branch erstellt, diese leitet sich von \textit{development} ab.
-        Nachdem die Funktionen entwicklet wurde, wird ein \textit{Pull Request} in GitHub auf die \textit{development} Branch angefragt.
-        Nun muss mindestens ein weiteres Teammitglied diesen \textit{Pull Request} überprüfen (Review), bevor ein \textit{merge} sattfinden kann.
-        Durch diese gegenseitige Kontrolle bleibt jeder mit dem Code vertraut und es können Fehler frühzeitig erkannt werden.
-        Dies führt zu einer konstant guten Code Qualität und verhindert Regression.
-
 
       \section{Ausblick}
         % Wie könnte das Projekt in Zukunft erweitert werden?
