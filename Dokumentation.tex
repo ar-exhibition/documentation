@@ -857,6 +857,52 @@
 
     In Abbildung \ref{ARWorldMap} ist zu sehen, wie anhand von Feature Points (gelb) die AR Session synchronisiert wird.
 
+  \subsubsection{Dynamisches Laden von Inhalten}
+
+  In der App werden die Funktionalität und die Inhalte getrennt. Das heißt, dass in der Installations-Datei keine Modelle, Bilder oder Videos vorhanden sind.
+  Dies sorgt für einen schnellen Download und eine schnelle Installation.
+  Die App Größe ist ein wichtiger Faktor, um die Installationsrate zu steigern.
+  In diesem Versuch \cite{Effectof10:online} ist zu sehen, dass die Installationsrate
+  um 66\% eingebrochen ist, nachdem eine App um 147MB gewachsen ist.
+
+  Ein weiterer Vorteil dieser Trennung ist die Möglichkeit die Inhalte jederzeit auszutauschen und erweitern zu können.
+  Dies ist möglich ohne eine neue Version der App zu veröffentlichen und ohne ein Update auf seiten der Benutzer.
+
+  Im folgendem Abschnitt wird eklärt, wie die Assets zu dem System hinzugefügt werden und zur Laufzeit geladen werden:
+
+  \paragraph{Dateien auf den Server laden und in Datenbank speichern}
+  Damit die Assets in der Unity App geladen werden können, müssen sie zuerst auf dem Server verfügbar sein.
+  Dazu werden sie über das CMS hochgeladen und es wird ein Eintrag in der Datenbank angelegt.
+
+  \paragraph{Abrufen der Asset Links über eine API}
+  Nachdem die Assets hochgeladen wurden, muss es einen Endpunkt haben, wo die Assets heruntergeladen werden können.
+  Über die API (https://cms.hotpot.codes/api/content) kann eine Liste aller Assets mit einem Link (AssetLink) abgerufen werden, der die Inhalte der Datenbank bereitstellt.
+  Auf dem Server werden die Dateien als \textit{static files} gehostet, damit wir mit einem einfachen GET-Request die Datei über das Internet laden können.
+
+  \paragraph{Download der Dateien in Unity}
+  Es wird die Unity-Klasse UnityWebRequest\footnote{\url{https://docs.unity3d.com/ScriptReference/Networking.UnityWebRequest.html}} genutzt, um die API anzusteuern und somit die Links zu den Assets zu aggregieren.
+  Dazu muss ein JSON \textit{parsing} stattfinden, wodurch die geladenen Textdaten als C\# Objekte interpretiert werden können.
+
+  Danach wird wieder ein UnityWebRequest durchgeführt, um die jeweiligen Assets herunterzuladen. Dabei kommt der DownloadHandler\footnote{https://docs.unity3d.com/ScriptReference/Networking.DownloadHandler.html}
+  zum Einsatz. Dieser ermöglicht asynchrones Laden der Dateien ohne den Main Thread zu blockieren.
+  Damit die Assets nicht immer neu heruntergeladen werden müssen, wurde ein Caching System konzipiert. Dabei wird eine UUID\footnote{universally unique identifier} für jedes heruntergeladene Asset auf dem Gerät gespeichert. Wenn bei dem Abgleich mit dem Server keine UUID gefunden wurde, wird das Asset heruntergeladen.
+  Wenn es das Asset schon gibt, wird es direkt aus dem Cache geladen ohne es erneut herunterzuladen.
+
+  \paragraph{Laden der Modelle in die Unity Scene}
+  Um die heruntergeladenen Assets nun in die Unity Scene zu laden, wird ein Importer benötigt. Durch unsere Content-Spezifikation stehen die Modelle ausschließlich im .gltf-Format zur Verfügung, weshalb ein GLTF-Importer genutzt werden muss.
+  Wir nutzen GLTFUtility\footnote{https://github.com/Siccity/GLTFUtility} von Thor Brigsted, da er nach unseren Untersuchungen, die besten Ergebnisse mit verschiednen Modellen liefert und zusätzlich noch asynchrones Laden erlaubt.
+
+  \subsubsection{AR Funktionalitäten}
+
+  Wir nutzen das Unity Package \textit{AR Foundation}, um die AR Funktionalität zu ermöglichen.
+  Dieses Package ist ein Wrapper zu den nativen Implementation von Apple (ARKit) und Google (ARCore).
+  Es werden also gleichzeitig iOS und Android unterstützt.
+  Jedoch gab es zum Zeitpunkt der Erstellung der App keine Möglichkeit auf Android Geräten eine AR Session zu speichern und wiederherzustellen.
+  Dies hat zur Folge, dass nur iOS Geräte verwendet werden können.
+  Trotzdem haben wir uns für ein universelles Framework entschieden,
+  damit in der Zukunft schnell die Unterstützung für Android angeboten werden kann, wenn die besagte Funktion auch auf Android möglich wird.
+
+
   \section{Wissenschaftliche Umsetzung}
   % Inwiefern wurde hier wissenschaftlich gearbeitet? Welche Forschungsfrage/n wurden geklärt und warum sind diese relevant für das Projekt?
   Für die Umsetzung des Projektes wurde die im neuen Ipad Pro erstmalig verbaute LidAR-Technologie verwendet, welche, wie bereits oben beschrieben, die Erkennung von Oberflächen und somit die Platzierung von Objekten in AR verbessert. Um herauszufinden ob die LidAR-Technologie die Immersionstiefe bei AR-Anwendungen erhöht wurden in einem User Research zehn Studenten der Hochschule Fresenius beobachtet und befragt. Die folgenden Kapitel stellen den Forschungsprozess und die Ergebnisse des User Research dar.
