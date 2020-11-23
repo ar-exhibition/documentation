@@ -106,6 +106,57 @@
       Museen und Ausstellungen können durch die App ihr Repertoire an Kunst und Objekten erweitern, da virtuelle Bilder und Objekte einfach ausgestellt werden können. 
       Die Inhalte können genau wie vom Kurator gewollt platziert werden und erscheinen dem Besucher in der gewollten Position, Rotation und Größe.
 
+
+      \section{Projekt Management}
+
+      Durch die Größe dieses Projektes und die Anzahl der Projektteilnehmer ist wichtig ein effizientes Projekt Management durchzusetzen.
+      Mit dem Projekt Management soll erreicht werden, dass der Projektstand konstant überwacht werden kann und frühzeitig Anpassungen vorgenommen werden können, um Präsentationstermine halten zu können.
+      
+      Unser Projekt Management besteht aus drei Teilen:
+    
+    \paragraph{Allgemeine Kommunikation}
+      Durch die aktuelle Corona Situation, war es uns nicht möglich sich persönlich zu treffen.
+      Die gesammte Kommunikation musste online stattfinden.
+      Wir haben \textit{Microsoft Teams} genutzt, um Besprechungen durchzuführen.
+      Zweimal in der Woche haben wir uns virtuell getroffen, um Ergebnisse zu präsentieren, aktuelle Probleme zu besprechen und neue Arbeitspakte festzulegen.
+    
+    \paragraph{Aufgaben Management}
+      Für die Verwaltung der Aufgaben haben wir \textit{Trello} genutzt.
+      Dieses Tool folgt dem Kanban-Prinzip und ermöglicht es Arbeitspakete durch verschiedene Prozessstufen (Spalten) laufen zu lassen.
+      Wir haben mit 4 Spalten gearbeitet. Als erstes haben wir die \textit{Backlog} Spalte, wo alle Ideen und Aufgaben gesammelt werden.
+      Bei Besprechungen wird festgelegt, welche Aufgaben als nächstes bearbeitet werden sollen. Diese Aufgabenpakete werden in die Prozessstufe \textit{Todo} verschoben.
+      Dort wird die Aufgabe einem Teammitglied zugeordnet, der diese Aufgabe als nächstes bearbeiten kann.
+      Wenn das Teammitglied mit dieser Aufgabe beginnt wird sie in \textit{Doing} verschoben.
+      Nach Abschluss der Aufgabe wird sie in \textit{Done} abgelegt.
+      So hat man einen Überblick über den Status aller Aufgaben und weiß genau, wer gerade an welche Aufgabe arbeitet.
+    
+      \begin{figure}[h]
+        \centering
+        \includegraphics[width=.9\textwidth]{trello}
+        \caption{Kanban Board - Trello}
+        \label{Trello}
+      \end{figure}
+    
+
+    \paragraph{Versionsverwaltung}
+      Da alle Teammitglieder gleichzeit an dem Code arbeiten, muss es eine verlässliche Versionsverwaltung geben.
+      Wir haben dafür \textit{git} genutzt. Unsere drei Arbeitsfelder \textit{CMS}, \textit{App} und \textit{Dokumentation} haben jeweils ihr eigenes Repository.
+      Damit dieses Repositories zwischen den Teammitgliedern synchronisiert werden können, haben wir sie auf \textit{GitHub} gehostet.
+      Dort sind unsere Repositories unter der Organisation \textit{AR Exhibition} zusammengefasst.
+
+      Um gleichzeitig an bestimmten Features zu arbeiten, gibt es verschiedene \textit{Branches}, die einen unterschiedlichen Entwicklungsstand haben.
+      In der \textit{master} Branch findet man den aktuellen veröffentlichten Stand, dieser Entwicklungszustand spiegelt das CMS unter \url{https://cms.hotpot.codes}
+      und die aktuelle Testflight\footnote{Ein Programm für iOS-Geräte, das es ermöglicht Beta-Versionen von Apps zu laden.} Version der App wider.
+      Des Weiteren gibt es die \text{development} Branch, die den aktuellen unveröffentlichten Entwickungsstand abbildet.
+      In regelmäßigen abständen wird der \textit{development} Stand in die \textit{master} Branch eingepflegt und veröffentlicht.
+
+      Wenn nun neue Funktionen entwickelt werden, wird eine neue Feature-Branch erstellt, diese leitet sich von \textit{development} ab.
+      Nachdem die Funktionen entwicklet wurde, wird ein \textit{Pull Request} in GitHub auf die \textit{development} Branch angefragt.
+      Nun muss mindestens ein weiteres Teammitglied diesen \textit{Pull Request} überprüfen (Review), bevor ein \textit{merge} sattfinden kann.
+      Durch diese gegenseitige Kontrolle bleibt jeder mit dem Code vertraut und es können Fehler frühzeitig erkannt werden.
+      Dies führt zu einer konstant guten Code Qualität und verhindert Regression.
+
+
   \section{Technische Umsetzung}
   % Wie funktioniert die App, bzw. das CMS? Welche Software/Hardware Einheiten werden verwendet?
   Das Projekt besteht im Wesentlichen aus zwei Komponenten: 
@@ -929,14 +980,15 @@
         Obwohl die Ergebnisse der Fragebögen keine stichhaltigen Ergebnisse erbrachten konnten die Aussagen der Versuchsteilnehmer während der Studie für die weitere Entwicklung nützliche Ergebnisse erbringen. Die Versuchsteilnehmer teilten uns bspw. mit dass das Scrollen der App-Auswahl nicht intuitiv sei, da die Gesten welche normalerweise auf mobilen Touchgeräten zum Scrollen verwendet werden nicht unterstützt wurden. Statt der normalen \glqq Swipe\grqq -Geste musste mit einer Scroll-Leiste an der Seite der UI gescrollt werden. Weiterhin fanden die Nutzer die Startseite der App verwirrend, da die Buttons zum Betreten der Szene als Besucher und Kurator schlecht als solche ausgezeichnet waren und einige Nutzer nicht wussten was sie tun konnten um die App zu benutzen. Eine weitere Funktionalität welche von den Nutzern erwartet wurde war das Positionieren, Rotieren und Skalieren von bereits platzierten Modellen. Die Nutzer verwendeten automatisch die hierfür erlernten Gesten und waren verwirrt und enttäuscht wenn sie feststellen mussten, dass diese keinerlei Auswirkungen haben.\\
 
         Neben Funktionalitäten der App welche fehlten oder noch nicht gut genug implementiert waren, teilten uns mehrere Nutzer mit, dass die App \glqq einfach zu benutzen\grqq{} und die Kern-Funktionen der App, das Auswählen und Platzieren von Modellen intuitiv verständlich sei.
-        \section{Schlussfolgerungen}
+      \section{Schlussfolgerungen}
         % Wie können die bei der Analyse gewonnenen Ergebnisse in das Projekt integriert werden? Bzw. wie wurden die Ergebnisse bereits integriert?
         Anhand der Ergebnisse der Fragebögen und der Auswertung der Beobachtungen der Nutzer beim Verwenden der App, sowie deren Kommentare, implementierten wir einige Änderungen am User Interface und integrierten neue, intuitiv von den Nutzern erwartete, Funktionen.\\
         Wir passten das User Interface in zweierlei Hinsicht an. Als Erstes änderten wir den Startbildschirm der App, um den Nutzern einen einfacheren Einstieg zu ermöglichen. Anstatt als Erstes den Modus, sprich Besucher oder Kurator, wählen zu müssen, wird der Nutzer nun aufgefordert einen Marker zu Scannen und kann daraufhin auswählen in welchem Modus er die Szene betritt.\\
         Um die Erwartungen der Nutzer in der App zu bedienen, änderten wir das Scroll-Verhalten der Asset-Auswahl, sodass die Nutzer wie gewohnt mit Gesten die Liste scrollen können. In diesem Zuge implementierten wir ebenfalls die von den Nutzern gewünschten Funktionen bereits platzierte Modelle später neu zu positionieren, rotieren und skalieren. Diese Funktionen wurden ebenfalls mit den von mobilen Geräten bereits bekannten Gesten implementiert.\\
 
         Durch die Kommentare der Nutzer und den Beobachtungen während der Nutzung konnten wir das User Interface der App deutlich verbessern und so die Nutzerzufriedenheit steigern. Die überarbeitete Version der App wurde bei späteren Demonstrationen intuitiver und besser angenommen.
-        
+      
+
       \section{Ausblick}
         % Wie könnte das Projekt in Zukunft erweitert werden?
         % PDF Unterstützung / PDFs in AR
